@@ -251,5 +251,6 @@
     "Unit price is required for each line.": "Her satır için birim fiyat zorunludur.",
     "Unit price must be a valid number.": "Birim fiyat geçerli bir sayı olmalıdır.",
     "Unit price cannot be negative.": "Birim fiyat negatif olamaz.",
-    "Too many requests. Please wait :seconds seconds before trying again.": "Çok fazla istek yapıldı. Lütfen tekrar denemeden önce :seconds saniye bekleyiniz."
+    "Too many requests. Please wait :seconds seconds before trying again.": "Çok fazla istek yapıldı. Lütfen tekrar denemeden önce :seconds saniye bekleyiniz.",
+    "Download PDF": "PDF İndir"
 }

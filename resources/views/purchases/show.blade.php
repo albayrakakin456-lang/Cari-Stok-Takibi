@@ -12,6 +12,10 @@
         <p class="text-muted small mb-0">{{ $purchase->created_at->format('d.m.Y H:i') }}</p>
     </div>
     <div class="d-flex align-items-center gap-2">
+        <a href="{{ route('purchases.pdf', $purchase->id) }}" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-file-earmark-pdf"></i>
+            <span>{{ __('Download PDF') }}</span>
+        </a>
         <a href="{{ route('purchases.index') }}" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
             <i class="bi bi-arrow-left"></i>
             <span>{{ __('Back to Purchases') }}</span>
@@ -110,4 +114,3 @@
     </div>
 </div>
 @endsection
-

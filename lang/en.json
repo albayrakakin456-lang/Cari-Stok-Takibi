@@ -251,5 +251,6 @@
     "Unit price is required for each line.": "Unit price is required for each line.",
     "Unit price must be a valid number.": "Unit price must be a valid number.",
     "Unit price cannot be negative.": "Unit price cannot be negative.",
-    "Too many requests. Please wait :seconds seconds before trying again.": "Too many requests. Please wait :seconds seconds before trying again."
+    "Too many requests. Please wait :seconds seconds before trying again.": "Too many requests. Please wait :seconds seconds before trying again.",
+    "Download PDF": "Download PDF"
 }

@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
     Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+    Route::get('/sales/{sale}/pdf', [SaleController::class, 'downloadPdf'])->name('sales.pdf');
+    Route::get('/purchases/{purchase}/pdf', [PurchaseController::class, 'downloadPdf'])->name('purchases.pdf');
     Route::resource('cash', CashTransactionController::class)->only(['index', 'create', 'store']);
 
     // Güvenli Çıkış (Logout)
@@ -56,5 +58,4 @@ Route::get('/lang/{locale}', function (string $locale) {
     }
     return redirect()->back();
 })->name('lang.switch');
-
 

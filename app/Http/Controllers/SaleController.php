@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB; // Transaction (İşlem Bütünlüğü) için
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -167,6 +168,19 @@ class SaleController extends Controller
     }
 
     /**
+     * Satış faturasını PDF olarak indir.
+     */
+    public function downloadPdf(string $id)
+    {
+        $sale = Sale::with(['contact', 'items.product'])->findOrFail($id);
+
+        return Pdf::loadView('pdf.invoice', [
+            'invoice' => $sale,
+            'invoiceType' => 'sale',
+        ])->setPaper('a4')->download($sale->invoice_number . '.pdf');
+    }
+
+    /**
      * Faturayı İptal Et (Ters Kayıt Mantığıyla Geri Alma)
      */
     public function destroy(string $id)
@@ -213,4 +227,3 @@ class SaleController extends Controller
         }
     }
 }
-

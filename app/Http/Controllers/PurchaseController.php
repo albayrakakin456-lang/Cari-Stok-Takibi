@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
@@ -159,6 +160,19 @@ class PurchaseController extends Controller
         // Eager Loading: Faturayı, tedarikçiyi ve kalemlerdeki ürünleri tek seferde çekiyoruz
         $purchase = Purchase::with(['contact', 'items.product'])->findOrFail($id);
         return view('purchases.show', compact('purchase'));
+    }
+
+    /**
+     * Alış faturasını PDF olarak indir.
+     */
+    public function downloadPdf(string $id)
+    {
+        $purchase = Purchase::with(['contact', 'items.product'])->findOrFail($id);
+
+        return Pdf::loadView('pdf.invoice', [
+            'invoice' => $purchase,
+            'invoiceType' => 'purchase',
+        ])->setPaper('a4')->download($purchase->invoice_number . '.pdf');
     }
 
     public function destroy(string $id)
