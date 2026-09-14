@@ -173,7 +173,7 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ route('purchases.create') }}" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
+                                    <a href="{{ route('purchases.create', ['product_id' => $prod->id]) }}" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
                                         <i class="bi bi-cart-plus"></i>
                                         <span>{{ __('Order Stock') }}</span>
                                     </a>

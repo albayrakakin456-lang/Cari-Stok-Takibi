@@ -83,7 +83,7 @@
                                         <select name="product_id[]" class="form-select" required>
                                             <option value="">{{ __('Select Product...') }}</option>
                                             @foreach($products as $product)
-                                                <option value="{{ $product->id }}">
+                                                <option value="{{ $product->id }}" @selected((int) old('product_id.0', $selectedProductId) === $product->id)>
                                                     {{ $product->name }} ({{ __('Current Stock') }}: {{ $product->stock }})
                                                 </option>
                                             @endforeach
@@ -162,4 +162,3 @@
     }
 </script>
 @endsection
-

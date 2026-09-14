@@ -23,12 +23,20 @@ class PurchaseController extends Controller
         return view('purchases.index', compact('purchases'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         // Alış faturası sadece Tedarikçilere (supplier) kesilir
         $contacts = Contact::where('type', 'supplier')->get();
         $products = Product::all();
-        return view('purchases.create', compact('contacts', 'products'));
+
+        // Dashboard'daki kritik stok listesinden gelindiyse ilgili ürünü ilk satırda seç.
+        // Ürün koleksiyonu kullanıcıya göre scope edildiği için başka kullanıcıların ürünleri seçilemez.
+        $requestedProductId = $request->integer('product_id');
+        $selectedProductId = $products->contains('id', $requestedProductId)
+            ? $requestedProductId
+            : null;
+
+        return view('purchases.create', compact('contacts', 'products', 'selectedProductId'));
     }
 
     public function store(Request $request)
@@ -203,4 +211,3 @@ class PurchaseController extends Controller
         }
     }
 }
-

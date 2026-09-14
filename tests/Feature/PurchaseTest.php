@@ -12,6 +12,52 @@ class PurchaseTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_dashboard_order_link_preselects_the_critical_product(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $product = Product::create([
+            'name' => 'Kritik Stoklu Ürün',
+            'code' => 'KRITIK-01',
+            'purchase_price' => 50,
+            'sale_price' => 75,
+            'tax_rate' => 20,
+            'min_stock' => 5,
+            'stock' => 2,
+        ]);
+
+        $this->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee(route('purchases.create', ['product_id' => $product->id]), false);
+
+        $this->get(route('purchases.create', ['product_id' => $product->id]))
+            ->assertOk()
+            ->assertSee('value="' . $product->id . '" selected', false);
+    }
+
+    public function test_purchase_create_does_not_preselect_another_users_product(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $this->actingAs($owner);
+        $product = Product::create([
+            'name' => 'Başka Kullanıcının Ürünü',
+            'code' => 'DIGER-01',
+            'purchase_price' => 50,
+            'sale_price' => 75,
+            'tax_rate' => 20,
+            'min_stock' => 5,
+            'stock' => 2,
+        ]);
+
+        $this->actingAs($otherUser)
+            ->get(route('purchases.create', ['product_id' => $product->id]))
+            ->assertOk()
+            ->assertDontSee('value="' . $product->id . '" selected', false);
+    }
+
     /**
      * TEST: Gecerli alis faturasi kaydedildiginde stok artmali ve hareket yazilmali
      */
