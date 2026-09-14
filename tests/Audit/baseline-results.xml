@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\Users\albay\cari-takip\phpunit.xml" tests="27" assertions="175" errors="0" failures="0" skipped="0" time="5.569302">
+    <testsuite name="Unit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.005491">
+      <testsuite name="Tests\Unit\ExampleTest" file="C:\Users\albay\cari-takip\tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.005491">
+        <testcase name="test_that_true_is_true" file="C:\Users\albay\cari-takip\tests\Unit\ExampleTest.php" line="12" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.005491"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="26" assertions="174" errors="0" failures="0" skipped="0" time="5.563811">
+      <testsuite name="Tests\Feature\AuthTest" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" tests="6" assertions="58" errors="0" failures="0" skipped="0" time="2.025852">
+        <testcase name="test_login_screen_can_be_rendered" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="22" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="2" time="0.565269">
+          <system-out>﻿﻿</system-out>
+        </testcase>
+        <testcase name="test_user_can_login_with_correct_credentials" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="35" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.052396"/>
+        <testcase name="test_user_cannot_login_with_invalid_password" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="60" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.225837"/>
+        <testcase name="test_login_is_throttled_after_too_many_failed_attempts" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="87" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="25" time="1.091227"/>
+        <testcase name="test_register_is_throttled_after_too_many_attempts" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="119" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.059229"/>
+        <testcase name="test_register_validation_messages_are_in_turkish" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="149" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="16" time="0.031895"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ContactTest" file="C:\Users\albay\cari-takip\tests\Feature\ContactTest.php" tests="3" assertions="8" errors="0" failures="0" skipped="0" time="0.179415">
+        <testcase name="test_guest_cannot_access_contacts" file="C:\Users\albay\cari-takip\tests\Feature\ContactTest.php" line="17" class="Tests\Feature\ContactTest" classname="Tests.Feature.ContactTest" assertions="2" time="0.021081"/>
+        <testcase name="test_authenticated_user_can_create_customer" file="C:\Users\albay\cari-takip\tests\Feature\ContactTest.php" line="26" class="Tests\Feature\ContactTest" classname="Tests.Feature.ContactTest" assertions="4" time="0.123758"/>
+        <testcase name="test_contact_creation_fails_with_invalid_phone" file="C:\Users\albay\cari-takip\tests\Feature\ContactTest.php" line="57" class="Tests\Feature\ContactTest" classname="Tests.Feature.ContactTest" assertions="2" time="0.034576"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ExampleTest" file="C:\Users\albay\cari-takip\tests\Feature\ExampleTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.019422">
+        <testcase name="test_guest_is_redirected_to_login" file="C:\Users\albay\cari-takip\tests\Feature\ExampleTest.php" line="10" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="2" time="0.019422"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\LocaleTest" file="C:\Users\albay\cari-takip\tests\Feature\LocaleTest.php" tests="4" assertions="50" errors="0" failures="0" skipped="0" time="1.828406">
+        <testcase name="test_can_switch_locale_to_english_and_render_translated_view" file="C:\Users\albay\cari-takip\tests\Feature\LocaleTest.php" line="17" class="Tests\Feature\LocaleTest" classname="Tests.Feature.LocaleTest" assertions="5" time="0.655463"/>
+        <testcase name="test_invalid_locale_is_ignored" file="C:\Users\albay\cari-takip\tests\Feature\LocaleTest.php" line="43" class="Tests\Feature\LocaleTest" classname="Tests.Feature.LocaleTest" assertions="1" time="0.028130"/>
+        <testcase name="test_product_create_page_localization" file="C:\Users\albay\cari-takip\tests\Feature\LocaleTest.php" line="53" class="Tests\Feature\LocaleTest" classname="Tests.Feature.LocaleTest" assertions="16" time="0.207985"/>
+        <testcase name="test_all_create_and_show_pages_localization" file="C:\Users\albay\cari-takip\tests\Feature\LocaleTest.php" line="93" class="Tests\Feature\LocaleTest" classname="Tests.Feature.LocaleTest" assertions="28" time="0.936828"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\MultiTenantIsolationTest" file="C:\Users\albay\cari-takip\tests\Feature\MultiTenantIsolationTest.php" tests="4" assertions="27" errors="0" failures="0" skipped="0" time="0.752394">
+        <testcase name="test_user_can_only_see_their_own_data" file="C:\Users\albay\cari-takip\tests\Feature\MultiTenantIsolationTest.php" line="20" class="Tests\Feature\MultiTenantIsolationTest" classname="Tests.Feature.MultiTenantIsolationTest" assertions="16" time="0.311898"/>
+        <testcase name="test_user_cannot_view_another_users_resource_by_direct_id" file="C:\Users\albay\cari-takip\tests\Feature\MultiTenantIsolationTest.php" line="83" class="Tests\Feature\MultiTenantIsolationTest" classname="Tests.Feature.MultiTenantIsolationTest" assertions="2" time="0.359380"/>
+        <testcase name="test_different_users_can_use_same_product_code" file="C:\Users\albay\cari-takip\tests\Feature\MultiTenantIsolationTest.php" line="112" class="Tests\Feature\MultiTenantIsolationTest" classname="Tests.Feature.MultiTenantIsolationTest" assertions="6" time="0.052760"/>
+        <testcase name="test_user_cannot_sell_another_users_product_or_customer" file="C:\Users\albay\cari-takip\tests\Feature\MultiTenantIsolationTest.php" line="157" class="Tests\Feature\MultiTenantIsolationTest" classname="Tests.Feature.MultiTenantIsolationTest" assertions="3" time="0.028356"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ProductTest" file="C:\Users\albay\cari-takip\tests\Feature\ProductTest.php" tests="4" assertions="12" errors="0" failures="0" skipped="0" time="0.097903">
+        <testcase name="test_authenticated_user_can_create_product_with_stock_movement" file="C:\Users\albay\cari-takip\tests\Feature\ProductTest.php" line="17" class="Tests\Feature\ProductTest" classname="Tests.Feature.ProductTest" assertions="4" time="0.024606"/>
+        <testcase name="test_product_creation_requires_initial_stock" file="C:\Users\albay\cari-takip\tests\Feature\ProductTest.php" line="54" class="Tests\Feature\ProductTest" classname="Tests.Feature.ProductTest" assertions="2" time="0.023040"/>
+        <testcase name="test_product_creation_validates_code_format_and_length" file="C:\Users\albay\cari-takip\tests\Feature\ProductTest.php" line="73" class="Tests\Feature\ProductTest" classname="Tests.Feature.ProductTest" assertions="4" time="0.026468"/>
+        <testcase name="test_product_creation_validates_barcode_format_and_length" file="C:\Users\albay\cari-takip\tests\Feature\ProductTest.php" line="105" class="Tests\Feature\ProductTest" classname="Tests.Feature.ProductTest" assertions="2" time="0.023789"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\PurchaseTest" file="C:\Users\albay\cari-takip\tests\Feature\PurchaseTest.php" tests="3" assertions="11" errors="0" failures="0" skipped="0" time="0.166679">
+        <testcase name="test_authenticated_user_can_create_purchase" file="C:\Users\albay\cari-takip\tests\Feature\PurchaseTest.php" line="18" class="Tests\Feature\PurchaseTest" classname="Tests.Feature.PurchaseTest" assertions="5" time="0.095945"/>
+        <testcase name="test_purchase_fails_validation_with_empty_or_invalid_rows" file="C:\Users\albay\cari-takip\tests\Feature\PurchaseTest.php" line="69" class="Tests\Feature\PurchaseTest" classname="Tests.Feature.PurchaseTest" assertions="4" time="0.040826"/>
+        <testcase name="test_purchase_fails_with_zero_or_negative_quantity" file="C:\Users\albay\cari-takip\tests\Feature\PurchaseTest.php" line="93" class="Tests\Feature\PurchaseTest" classname="Tests.Feature.PurchaseTest" assertions="2" time="0.029909"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\SaleTest" file="C:\Users\albay\cari-takip\tests\Feature\SaleTest.php" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.493738">
+        <testcase name="test_sale_creation_updates_stock_cash_and_dispatches_queue_job" file="C:\Users\albay\cari-takip\tests\Feature\SaleTest.php" line="24" class="Tests\Feature\SaleTest" classname="Tests.Feature.SaleTest" assertions="6" time="0.493738"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

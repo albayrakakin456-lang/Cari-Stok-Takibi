@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Audit\ReleaseReadinessTest" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" tests="35" assertions="472" errors="0" failures="25" skipped="0" time="30.111956">
+    <testsuite name="Tests\Audit\ReleaseReadinessTest::test_empty_account_pages_and_their_links" tests="2" assertions="174" errors="0" failures="0" skipped="0" time="1.513143">
+      <testcase name="test_empty_account_pages_and_their_links with data set #0" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="52" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="87" time="1.165963">
+        <system-out>﻿﻿</system-out>
+      </testcase>
+      <testcase name="test_empty_account_pages_and_their_links with data set #1" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="52" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="87" time="0.347180"/>
+    </testsuite>
+    <testsuite name="Tests\Audit\ReleaseReadinessTest::test_populated_account_pages_and_links" tests="2" assertions="200" errors="0" failures="0" skipped="0" time="0.989245">
+      <testcase name="test_populated_account_pages_and_links with data set #0" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="82" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="100" time="0.555824"/>
+      <testcase name="test_populated_account_pages_and_links with data set #1" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="82" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="100" time="0.433421"/>
+    </testsuite>
+    <testsuite name="Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash" tests="19" assertions="19" errors="0" failures="19" skipped="0" time="25.712479">
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /contacts/1/edit&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="2.600072">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /contacts/1/edit"&#13;
+GET /contacts/1/edit returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PUT /contacts/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.434504">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PUT /contacts/1"&#13;
+PUT /contacts/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PATCH /contacts/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.560685">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PATCH /contacts/1"&#13;
+PATCH /contacts/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;DELETE /contacts/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.428892">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "DELETE /contacts/1"&#13;
+DELETE /contacts/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /products/1/edit&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.428786">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /products/1/edit"&#13;
+GET /products/1/edit returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PUT /products/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.413250">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PUT /products/1"&#13;
+PUT /products/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PATCH /products/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.420399">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PATCH /products/1"&#13;
+PATCH /products/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;DELETE /products/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.413024">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "DELETE /products/1"&#13;
+DELETE /products/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /sales/1/edit&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.422568">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /sales/1/edit"&#13;
+GET /sales/1/edit returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PUT /sales/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.437726">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PUT /sales/1"&#13;
+PUT /sales/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PATCH /sales/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.408019">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PATCH /sales/1"&#13;
+PATCH /sales/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /purchases/1/edit&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.418142">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /purchases/1/edit"&#13;
+GET /purchases/1/edit returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PUT /purchases/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.606966">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PUT /purchases/1"&#13;
+PUT /purchases/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PATCH /purchases/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.470746">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PATCH /purchases/1"&#13;
+PATCH /purchases/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /cash/1/edit&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.544969">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /cash/1/edit"&#13;
+GET /cash/1/edit returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PUT /cash/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="1.300865">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PUT /cash/1"&#13;
+PUT /cash/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;PATCH /cash/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.473144">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "PATCH /cash/1"&#13;
+PATCH /cash/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;DELETE /cash/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.490937">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "DELETE /cash/1"&#13;
+DELETE /cash/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+      <testcase name="test_registered_resource_endpoints_do_not_crash with data set &quot;GET /cash/1&quot;" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="112" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.438785">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_registered_resource_endpoints_do_not_crash with data set "GET /cash/1"&#13;
+GET /cash/1 returned 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:117</failure>
+      </testcase>
+    </testsuite>
+    <testcase name="test_guest_pages_protected_pages_and_logout" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="120" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="23" time="0.039834"/>
+    <testcase name="test_locale_switch_returns_to_valid_page" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="136" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="8" time="0.033001"/>
+    <testcase name="test_unknown_and_foreign_records_correctly_return_404" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="145" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="8" time="0.044515"/>
+    <testcase name="test_empty_forms_return_validation_errors_instead_of_500" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="157" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="15" time="0.035166"/>
+    <testcase name="test_misaligned_sale_quantities_are_rejected_without_500" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="165" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.674055">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_misaligned_sale_quantities_are_rejected_without_500&#13;
+Missing second quantity produced HTTP 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:172</failure>
+    </testcase>
+    <testcase name="test_nested_product_id_is_rejected_without_500" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="176" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.480597">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_nested_product_id_is_rejected_without_500&#13;
+Nested product ID produced HTTP 500
+Failed asserting that 500 is less than 500.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:182</failure>
+    </testcase>
+    <testcase name="test_duplicate_product_rows_cannot_oversell_stock" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="186" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="2" time="0.303128">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_duplicate_product_rows_cannot_oversell_stock&#13;
+Two rows of 6 oversold the stock of 10.
+Failed asserting that -2 is equal to 0 or is greater than 0.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:193</failure>
+    </testcase>
+    <testcase name="test_sale_cancellation_restores_stock_and_cash" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="196" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="7" time="0.056104"/>
+    <testcase name="test_paid_purchase_cancellation_restores_cash" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="212" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="5" time="0.089754">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_paid_purchase_cancellation_restores_cash&#13;
+Paid purchase was cancelled but the cash outflow was not reversed.
+Failed asserting that -20.0 matches expected 0.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:218</failure>
+    </testcase>
+    <testcase name="test_purchase_cancellation_cannot_make_stock_negative" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="221" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="4" time="0.054413">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_purchase_cancellation_cannot_make_stock_negative&#13;
+Cancelling an already-sold purchase created negative stock.
+Failed asserting that -5 is equal to 0 or is greater than 0.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:229</failure>
+    </testcase>
+    <testcase name="test_contact_list_and_details_show_same_balance" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="232" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="4" time="0.053151">
+      <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Audit\ReleaseReadinessTest::test_contact_list_and_details_show_same_balance&#13;
+List balance differs from the statement balance.
+Failed asserting that 0 matches expected 20.
+&#13;
+C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php:239</failure>
+    </testcase>
+    <testcase name="test_registration_with_long_password_is_handled_without_500" file="C:\Users\albay\cari-takip\tests\Audit\ReleaseReadinessTest.php" line="242" class="Tests\Audit\ReleaseReadinessTest" classname="Tests.Audit.ReleaseReadinessTest" assertions="1" time="0.033370"/>
+  </testsuite>
+</testsuites>

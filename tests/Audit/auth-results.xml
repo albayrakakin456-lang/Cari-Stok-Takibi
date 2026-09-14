@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\Users\albay\cari-takip\phpunit.xml" tests="8" assertions="61" errors="0" failures="0" skipped="0" time="2.021171">
+    <testsuite name="Unit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.004387">
+      <testsuite name="Tests\Unit\ExampleTest" file="C:\Users\albay\cari-takip\tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.004387">
+        <testcase name="test_that_true_is_true" file="C:\Users\albay\cari-takip\tests\Unit\ExampleTest.php" line="12" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.004387"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="7" assertions="60" errors="0" failures="0" skipped="0" time="2.016784">
+      <testsuite name="Tests\Feature\AuthTest" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" tests="6" assertions="58" errors="0" failures="0" skipped="0" time="1.992466">
+        <testcase name="test_login_screen_can_be_rendered" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="22" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="2" time="0.554381">
+          <system-out>﻿﻿</system-out>
+        </testcase>
+        <testcase name="test_user_can_login_with_correct_credentials" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="35" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.048658"/>
+        <testcase name="test_user_cannot_login_with_invalid_password" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="60" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.219567"/>
+        <testcase name="test_login_is_throttled_after_too_many_failed_attempts" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="87" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="25" time="1.071311"/>
+        <testcase name="test_register_is_throttled_after_too_many_attempts" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="119" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="5" time="0.068152"/>
+        <testcase name="test_register_validation_messages_are_in_turkish" file="C:\Users\albay\cari-takip\tests\Feature\AuthTest.php" line="149" class="Tests\Feature\AuthTest" classname="Tests.Feature.AuthTest" assertions="16" time="0.030397"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\ExampleTest" file="C:\Users\albay\cari-takip\tests\Feature\ExampleTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.024318">
+        <testcase name="test_guest_is_redirected_to_login" file="C:\Users\albay\cari-takip\tests\Feature\ExampleTest.php" line="10" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="2" time="0.024318"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
