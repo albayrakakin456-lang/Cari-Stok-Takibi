@@ -29,7 +29,14 @@
                     <tbody>
                         @forelse($sales as $sale)
                         <tr>
-                            <td><strong class="text-dark">{{ $sale->invoice_number }}</strong></td>
+                            <td>
+                                <strong class="text-dark">{{ $sale->invoice_number }}</strong>
+                                @if ($sale->status === 'cancelled')
+                                    <span class="badge bg-danger ms-2">{{ __('Cancelled') }}</span>
+                                @else
+                                    <span class="badge bg-success ms-2">{{ __('Active') }}</span>
+                                @endif
+                            </td>
                             <td>
                                 <span class="fw-semibold">{{ $sale->contact->name }}</span>
                             </td>

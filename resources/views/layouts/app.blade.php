@@ -303,6 +303,14 @@
                             <span>{{ __('Cash Ledger') }}</span>
                         </a>
                     </li>
+                    @if(Auth::user()->is_admin)
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}" href="{{ route('api-tokens.index') }}">
+                                <i class="bi bi-key"></i>
+                                <span>API Tokenları</span>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
 
                 <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0 flex-nowrap">
@@ -411,4 +419,3 @@
     @yield('scripts')
 </body>
 </html>
-

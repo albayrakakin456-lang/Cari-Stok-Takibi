@@ -7,11 +7,14 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+// Kullaniciya Postman'de kullanabileceğimiz API token'i üretme özelliğini ekleyen trait'i içeri aktariyoruz.
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    // HasApiTokens API token'larini, diğer trait'ler modelin mevcut özelliklerini yönetir.
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +47,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -70,5 +74,10 @@ class User extends Authenticatable
     public function cashTransactions()
     {
         return $this->hasMany(CashTransaction::class);
+    }
+
+    public function webhookEndpoints()
+    {
+        return $this->hasMany(WebhookEndpoint::class);
     }
 }

@@ -81,6 +81,16 @@
                                 </tr>
                             </thead>
                             <tbody id="cart-body">
+                                @php
+                                    $oldProductIds = old('product_id', [null]);
+                                    $oldQuantities = old('quantity', [1]);
+                                    $rowCount = max(count($oldProductIds), count($oldQuantities), 1);
+                                @endphp
+                                @for ($index = 0; $index < $rowCount; $index++)
+                                @php
+                                    $selectedProductId = $oldProductIds[$index] ?? null;
+                                    $selectedProduct = $products->firstWhere('id', (int) $selectedProductId);
+                                @endphp
                                 <tr>
                                     <td class="ps-4">
                                         <select name="product_id[]" class="form-select product-select" onchange="handleProductChange(this)" required>
@@ -89,7 +99,8 @@
                                                 <option value="{{ $product->id }}" 
                                                         data-stock="{{ $product->stock }}"
                                                         data-price="{{ $product->sale_price }}"
-                                                        {{ $product->stock <= 0 ? 'class=text-danger' : '' }}>
+                                                        @class(['text-danger' => $product->stock <= 0])
+                                                        @selected((int) $selectedProductId === $product->id)>
                                                     {{ $product->name }} ({{ __('Current Stock') }}: {{ $product->stock }}{{ $product->stock <= 0 ? ' - TÜKENDİ' : '' }})
                                                 </option>
                                             @endforeach
@@ -97,12 +108,12 @@
                                         <div class="stock-feedback small mt-1"></div>
                                     </td>
                                     <td>
-                                        <input type="number" name="quantity[]" class="form-control qty-input" value="1" min="1" oninput="handleQuantityChange(this)" required>
+                                        <input type="number" name="quantity[]" class="form-control qty-input" value="{{ $oldQuantities[$index] ?? 1 }}" min="1" oninput="handleQuantityChange(this)" required>
                                     </td>
                                     <td>
                                         <div class="input-group">
                                             <span class="input-group-text">₺</span>
-                                            <input type="number" step="0.01" name="unit_price[]" class="form-control unit-price-input" placeholder="0.00" required>
+                                            <input type="number" step="0.01" name="unit_price[]" class="form-control unit-price-input" value="{{ $selectedProduct?->sale_price }}" placeholder="0.00" readonly required title="{{ __('The unit price is taken from the product record.') }}">
                                         </div>
                                     </td>
                                     <td class="text-center">
@@ -111,6 +122,7 @@
                                         </button>
                                     </td>
                                 </tr>
+                                @endfor
                             </tbody>
                         </table>
                     </div>
@@ -150,7 +162,7 @@
         var price = selectedOpt.getAttribute('data-price') || '';
         
         var priceInput = tr.querySelector('.unit-price-input');
-        if (priceInput && !priceInput.value) {
+        if (priceInput) {
             priceInput.value = price;
         }
 

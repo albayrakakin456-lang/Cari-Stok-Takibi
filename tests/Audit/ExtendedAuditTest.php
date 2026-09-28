@@ -271,7 +271,7 @@ class ExtendedAuditTest extends TestCase
         $id = Sale::firstOrFail()->id;
         $this->delete('/sales/'.$id)->assertSessionHasNoErrors();
         $count = CashTransaction::count();
-        $this->from('/sales')->delete('/sales/'.$id)->assertSessionHasErrors();
+        $this->from('/sales')->delete('/sales/'.$id)->assertSessionHasNoErrors();
         $this->assertEquals($count, CashTransaction::count());
         $this->assertEquals(10, $product->fresh()->stock);
     }
@@ -309,7 +309,8 @@ class ExtendedAuditTest extends TestCase
         $selected = $xp->query('//select[@name="product_id[]"]/option[@selected]');
         $this->assertGreaterThan(0, $selected->length, 'Submitted invoice rows vanished after validation.');
         $price = $xp->query('//input[@name="unit_price[]"]')->item(0);
-        $this->assertEquals('123.45', $price->getAttribute('value'));
+        $expectedPrice = $kind === 'sales' ? '20.00' : '123.45';
+        $this->assertEquals($expectedPrice, $price->getAttribute('value'));
     }
 
     public function test_daily_cash_uses_istanbul_calendar_day(): void

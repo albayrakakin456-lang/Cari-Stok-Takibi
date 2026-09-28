@@ -527,8 +527,12 @@ class ComprehensiveSecurityTest extends TestCase
             'quantity' => 5,
         ]);
 
-        // Fatura silinmiş olmalı
-        $this->assertDatabaseMissing('sales', ['id' => $sale->id]);
+        // Fatura denetim izi için silinmemeli, iptal durumunda saklanmalı
+        $this->assertDatabaseHas('sales', [
+            'id' => $sale->id,
+            'status' => 'cancelled',
+        ]);
+        $this->assertNotNull($sale->fresh()->cancelled_at);
     }
 
     // ════════════════════════════════════════════════════════════════

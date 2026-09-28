@@ -7,6 +7,9 @@
     <div>
         <div class="d-flex align-items-center gap-2 mb-1">
             <span class="badge bg-secondary fs-6 px-3 py-2 rounded-pill font-monospace">{{ $sale->invoice_number }}</span>
+            @if ($sale->status === 'cancelled')
+                <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill">{{ __('Cancelled') }}</span>
+            @endif
             <h3 class="fw-bold mb-0">{{ __('Sales Invoice') }}</h3>
         </div>
         <p class="text-muted small mb-0">{{ $sale->created_at->format('d.m.Y H:i') }}</p>
@@ -21,21 +24,33 @@
             <span>{{ __('Back to Sales') }}</span>
         </a>
         
-        <!-- Fatura İptal (Delete) Formu -->
-        <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('ATTENTION: When you cancel this sales invoice, stocks will be restored and cash will be refunded. Are you sure?') }}');">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1">
-                <i class="bi bi-x-circle"></i>
-                <span>{{ __('Cancel Invoice') }}</span>
-            </button>
-        </form>
+        @if ($sale->status !== 'cancelled')
+            <!-- Fatura İptal Formu -->
+            <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('ATTENTION: When you cancel this sales invoice, stocks will be restored and cash will be refunded. Are you sure?') }}');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-x-circle"></i>
+                    <span>{{ __('Cancel Invoice') }}</span>
+                </button>
+            </form>
+        @endif
     </div>
 </div>
 
 @if ($errors->any())
     <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
         {{ $errors->first() }}
+    </div>
+@endif
+
+@if ($sale->status === 'cancelled')
+    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+        <i class="bi bi-x-circle-fill me-1"></i>
+        <strong>{{ __('This invoice has been cancelled.') }}</strong>
+        @if ($sale->cancelled_at)
+            <span class="ms-1">{{ $sale->cancelled_at->format('d.m.Y H:i') }}</span>
+        @endif
     </div>
 @endif
 

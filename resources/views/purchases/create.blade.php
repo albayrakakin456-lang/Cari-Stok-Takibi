@@ -50,7 +50,7 @@
                     <select name="contact_id" class="form-select" required>
                         <option value="">{{ __('Select...') }}</option>
                         @foreach($contacts as $supplier)
-                            <option value="{{ $supplier->id }}">
+                            <option value="{{ $supplier->id }}" @selected((int) old('contact_id') === $supplier->id)>
                                 {{ $supplier->name }} ({{ $supplier->phone ?? __('Without Phone') }})
                             </option>
                         @endforeach
@@ -78,24 +78,31 @@
                                 </tr>
                             </thead>
                             <tbody id="cart-body">
+                                @php
+                                    $oldProductIds = old('product_id', $selectedProductId ? [$selectedProductId] : [null]);
+                                    $oldQuantities = old('quantity', [1]);
+                                    $oldUnitPrices = old('unit_price', ['']);
+                                    $rowCount = max(count($oldProductIds), count($oldQuantities), count($oldUnitPrices), 1);
+                                @endphp
+                                @for ($index = 0; $index < $rowCount; $index++)
                                 <tr>
                                     <td class="ps-4">
                                         <select name="product_id[]" class="form-select" required>
                                             <option value="">{{ __('Select Product...') }}</option>
                                             @foreach($products as $product)
-                                                <option value="{{ $product->id }}" @selected((int) old('product_id.0', $selectedProductId) === $product->id)>
+                                                <option value="{{ $product->id }}" @selected((int) ($oldProductIds[$index] ?? null) === $product->id)>
                                                     {{ $product->name }} ({{ __('Current Stock') }}: {{ $product->stock }})
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" name="quantity[]" class="form-control" value="1" min="1" required>
+                                        <input type="number" name="quantity[]" class="form-control" value="{{ $oldQuantities[$index] ?? 1 }}" min="1" required>
                                     </td>
                                     <td>
                                         <div class="input-group">
                                             <span class="input-group-text">₺</span>
-                                            <input type="number" step="0.01" name="unit_price[]" class="form-control" placeholder="0.00" required>
+                                            <input type="number" step="0.01" name="unit_price[]" class="form-control" value="{{ $oldUnitPrices[$index] ?? '' }}" placeholder="0.00" required>
                                         </div>
                                     </td>
                                     <td class="text-center">
@@ -104,6 +111,7 @@
                                         </button>
                                     </td>
                                 </tr>
+                                @endfor
                             </tbody>
                         </table>
                     </div>
@@ -120,7 +128,7 @@
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body p-4">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="is_paid" value="1" id="isPaidSwitch">
+                        <input class="form-check-input" type="checkbox" name="is_paid" value="1" id="isPaidSwitch" @checked(old('is_paid'))>
                         <label class="form-check-label fw-bold" for="isPaidSwitch">
                             {{ __('Paid in cash from register (if checked, recorded as Cash Outflow automatically)') }}
                         </label>
@@ -147,6 +155,7 @@
 <script>
     function addRow() {
         var row = document.querySelector('#cart-body tr').cloneNode(true);
+        row.querySelector('select').selectedIndex = 0;
         row.querySelectorAll('input').forEach(input => input.value = '');
         row.querySelector('input[name="quantity[]"]').value = '1';
         document.getElementById('cart-body').appendChild(row);

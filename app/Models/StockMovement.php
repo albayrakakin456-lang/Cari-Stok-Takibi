@@ -9,7 +9,7 @@ class StockMovement extends Model
 {
     use BelongsToUser;
 
-    protected $fillable = ['user_id', 'product_id', 'type', 'quantity', 'description'];
+    protected $fillable = ['user_id', 'product_id', 'sale_id', 'type', 'quantity', 'description'];
 
     public function product()
     {

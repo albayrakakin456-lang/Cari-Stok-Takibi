@@ -9,7 +9,24 @@ class Sale extends Model
 {
     use BelongsToUser;
 
-    protected $fillable = ['user_id', 'contact_id', 'invoice_number', 'total_amount'];
+    protected $fillable = [
+        'user_id',
+        'contact_id',
+        'invoice_number',
+        'external_reference',
+        'request_fingerprint',
+        'total_amount',
+        'status',
+        'cancelled_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'total_amount' => 'decimal:2',
+            'cancelled_at' => 'datetime',
+        ];
+    }
 
     public function contact()
     {

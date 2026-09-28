@@ -9,6 +9,7 @@ use App\Models\Contact;
 use App\Models\StockMovement;
 use App\Models\CashTransaction;
 use App\Jobs\SendSaleNotification;
+use App\Services\WebhookDispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // Transaction (İşlem Bütünlüğü) için   kilit sınıf
 use Illuminate\Support\Facades\RateLimiter;
@@ -18,6 +19,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
+    public function __construct(private readonly WebhookDispatcher $webhooks)
+    {
+    }
+
     public function index()
     {
         // Satışları ve satışın sahibini (müşteriyi) beraber çekiyoruz
@@ -39,6 +44,7 @@ class SaleController extends Controller
         $throttleKey = 'sale_store|' . auth()->id();
         if (RateLimiter::tooManyAttempts($throttleKey, 30)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+
             return back()->withInput()->withErrors([
                 'rate_limit' => "Çok sık satış faturası oluşturuyorsunuz. Lütfen {$seconds} saniye sonra tekrar deneyin."
             ]);
@@ -98,7 +104,9 @@ class SaleController extends Controller
             // B. Formdan gelen ürünleri döngüye sok
             foreach ($request->product_id as $index => $productId) {
                 $quantity = $request->quantity[$index];
-                $unitPrice = $request->unit_price[$index];
+                // Tarayıcıdaki fiyat alanı değiştirilebilir; güvenilir fiyatı ürün kaydından alırız.
+                $product = Product::findOrFail($productId);
+                $unitPrice = (float) $product->sale_price;
                 $lineTotal = $quantity * $unitPrice;
                 $totalAmount += $lineTotal;
 
@@ -120,7 +128,6 @@ class SaleController extends Controller
                 ]);
 
                 // B3. Ürünün kendi stok miktarını düşür (decrement Laravel'in hazır fonksiyonudur)
-                $product = Product::find($productId);
                 $product->decrement('stock', $quantity);
             }
 
@@ -134,6 +141,11 @@ class SaleController extends Controller
                 'amount' => $totalAmount,
                 'description' => $sale->invoice_number . ' numaralı satış tahsilatı'
             ]);
+
+            $this->webhooks->invoiceCreated(
+                $request->user(),
+                $sale->fresh(),
+            );
 
             // 3. HER ŞEY KUSURSUZ ÇALIŞTI, İŞLEMLERİ ONAYLA VE VERİTABANINA YAZ!
             DB::commit();
@@ -183,46 +195,66 @@ class SaleController extends Controller
     /**
      * Faturayı İptal Et (Ters Kayıt Mantığıyla Geri Alma)
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        DB::beginTransaction();
-
         try {
-            $sale = Sale::with('items')->findOrFail($id);
+            $alreadyCancelled = DB::transaction(function () use ($request, $id) {
+                $sale = Sale::with('items')
+                    ->lockForUpdate()
+                    ->findOrFail($id);
 
-            // 1. Kalemleri döngüye alıp düşülen stokları depoya geri ekliyoruz
-            foreach ($sale->items as $item) {
-                $product = Product::find($item->product_id);
-                if ($product) {
-                    $product->increment('stock', $item->quantity);
-
-                    // Stok hareketlerine 'Giriş' (İade) logu atıyoruz
-                    StockMovement::create([
-                        'product_id' => $product->id,
-                        'type' => 'in',
-                        'quantity' => $item->quantity,
-                        'description' => $sale->invoice_number . ' numaralı faturanın iptali (Stok İadesi)'
-                    ]);
+                // Aynı iptal isteği tekrar gelirse stok ve kasa ikinci kez değiştirilmez.
+                if ($sale->status === 'cancelled') {
+                    return true;
                 }
-            }
 
-            // 2. Kasaya girmiş olan parayı geri çıkarıyoruz (Ters Kasa Hareketi)
-            CashTransaction::create([
-                'contact_id' => $sale->contact_id,
-                'type' => 'out',
-                'amount' => $sale->total_amount,
-                'description' => $sale->invoice_number . ' numaralı faturanın iptali (Tahsilat İadesi)'
-            ]);
+                foreach ($sale->items as $item) {
+                    $product = Product::whereKey($item->product_id)
+                        ->lockForUpdate()
+                        ->first();
 
-            // 3. Faturayı siliyoruz (Veritabanındaki cascade kuralı kalemleri de temizler)
-            $sale->delete();
+                    if ($product) {
+                        $product->increment('stock', $item->quantity);
 
-            DB::commit();
+                        StockMovement::create([
+                            'product_id' => $product->id,
+                            'sale_id' => $sale->id,
+                            'type' => 'in',
+                            'quantity' => $item->quantity,
+                            'description' => $sale->invoice_number . ' numaralı faturanın iptali (Stok İadesi)',
+                        ]);
+                    }
+                }
 
-            return redirect()->route('sales.index')->with('success', 'Fatura başarıyla iptal edildi. Stoklar ve kasa dengelendi.');
+                CashTransaction::create([
+                    'contact_id' => $sale->contact_id,
+                    'sale_id' => $sale->id,
+                    'type' => 'out',
+                    'amount' => $sale->total_amount,
+                    'description' => $sale->invoice_number . ' numaralı faturanın iptali (Tahsilat İadesi)',
+                ]);
+
+                $sale->update([
+                    'status' => 'cancelled',
+                    'cancelled_at' => now(),
+                ]);
+
+                $this->webhooks->invoiceCancelled(
+                    $request->user(),
+                    $sale->fresh(),
+                );
+
+                return false;
+            });
+
+            return redirect()->route('sales.index')->with(
+                'success',
+                $alreadyCancelled
+                    ? 'Fatura daha önce iptal edilmiş; yeni hareket oluşturulmadı.'
+                    : 'Fatura başarıyla iptal edildi. Stoklar ve kasa dengelendi.',
+            );
 
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withErrors('Fatura iptal edilirken bir hata oluştu: ' . $e->getMessage());
         }
     }

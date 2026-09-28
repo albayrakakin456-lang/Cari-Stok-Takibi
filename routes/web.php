@@ -8,6 +8,10 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\CashTransactionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ApiTokenController;
+
+// Dış servis geliştiricileri için herkese açık API ve webhook rehberi.
+Route::view('/integration/docs', 'docs.integration')->name('integration.docs');
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +47,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchases/{purchase}/pdf', [PurchaseController::class, 'downloadPdf'])->name('purchases.pdf');
     Route::resource('cash', CashTransactionController::class)->only(['index', 'create', 'store']);
 
+    Route::middleware('admin')->group(function () {
+        Route::get('/settings/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');
+        Route::post('/settings/api-tokens', [ApiTokenController::class, 'store'])->name('api-tokens.store');
+        Route::delete('/settings/api-tokens/{token}', [ApiTokenController::class, 'destroy'])
+            ->whereNumber('token')
+            ->name('api-tokens.destroy');
+    });
+
     // Güvenli Çıkış (Logout)
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
@@ -58,4 +70,3 @@ Route::get('/lang/{locale}', function (string $locale) {
     }
     return redirect()->back();
 })->name('lang.switch');
-

@@ -1,0 +1,373 @@
+{
+  "info": {
+    "_postman_id": "0e646293-253b-498b-89e4-542e9d332cd2",
+    "name": "Cari Takip API v1",
+    "description": "Cari, ürün ve satış faturası akışını uçtan uca test eder. İstekleri klasör sırasıyla çalıştırın.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{api_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "0 - Panelden verilen tokenı doğrula",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/auth/me"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Token geçerli', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0.1 - Token sahibini getir",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/auth/me"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Token sahibi getirildi', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 - Cari oluştur",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Test Müşterisi\",\n  \"type\": \"customer\",\n  \"phone\": \"05321234567\",\n  \"email\": \"postman-{{$timestamp}}@example.test\",\n  \"address\": \"İstanbul\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{base_url}}/contacts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Cari 201 ile oluşturuldu', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    pm.environment.set('contact_id', pm.response.json().data.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Ürün oluştur",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Test Ürünü\",\n  \"code\": \"POSTMAN-{{$timestamp}}\",\n  \"barcode\": \"869{{$timestamp}}\",\n  \"purchase_price\": 300,\n  \"sale_price\": 450,\n  \"tax_rate\": 20,\n  \"min_stock\": 5,\n  \"opening_stock\": 50\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{base_url}}/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Ürün 201 ile oluşturuldu', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    pm.environment.set('product_id', pm.response.json().data.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Fatura oluştur",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"external_reference\": \"POSTMAN-{{$timestamp}}\",\n  \"contact_id\": {{contact_id}},\n  \"invoice_number\": \"FAT-POSTMAN-{{$timestamp}}\",\n  \"items\": [\n    {\n      \"product_id\": {{product_id}},\n      \"quantity\": 3\n    }\n  ]\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{base_url}}/invoices"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Fatura 201 ile oluşturuldu', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    pm.environment.set('invoice_id', pm.response.json().data.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Fatura detayını getir",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/invoices/{{invoice_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Fatura detayı alındı', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 - Ürünleri listele ve stoğu kontrol et",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/products?per_page=100"
+      }
+    },
+    {
+      "name": "6 - Faturayı iptal et",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/invoices/{{invoice_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Fatura iptal edildi', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Yetki kontrolü - read-only token ile 403",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{read_only_api_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Bu cari oluşmamalı\",\n  \"type\": \"customer\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{base_url}}/contacts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Read-only token 403 alır', function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 - Webhook endpoint oluştur",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"{{webhook_receiver_url}}\",\n  \"events\": [\n    \"invoice.created\",\n    \"invoice.cancelled\"\n  ]\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{base_url}}/webhook-endpoints"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Webhook endpoint oluşturuldu', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    const data = pm.response.json().data;",
+              "    pm.environment.set('webhook_endpoint_id', data.id);",
+              "    pm.environment.set('webhook_secret', data.secret);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8 - Test webhooku kuyruğa ekle",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/webhook-endpoints/{{webhook_endpoint_id}}/test"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Test webhooku kabul edildi', function () {",
+              "    pm.response.to.have.status(202);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9 - Webhook teslimat geçmişini getir",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/webhook-deliveries?per_page=20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Webhook teslimatları getirildi', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 - Webhook endpointi pasife al",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/webhook-endpoints/{{webhook_endpoint_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Webhook endpoint pasife alındı', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 - Çıkış yap ve tokenı iptal et",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/auth/logout"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Çıkış başarılı', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "    pm.environment.unset('api_token');",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
