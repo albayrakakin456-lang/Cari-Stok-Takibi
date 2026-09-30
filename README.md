@@ -14,10 +14,42 @@ Cari hesapları, ürünleri, stok hareketlerini, alış-satış faturalarını v
 - Alış ve satış faturaları
 - Stok ve kasa hareketleri
 - PDF fatura çıktısı
+- Panelden yönetilebilen dinamik kampanya ve indirim motoru
 - Kullanıcı bazlı veri izolasyonu
 - Türkçe ve İngilizce dil desteği
 - Yetkilendirme, hız sınırlama ve güvenlik kontrolleri
 - Otomatik testler
+
+## Kampanya ve İndirim Motoru
+
+Uygulamada kampanyalar yönetim panelindeki **Kampanyalar** bölümünden oluşturulur, düzenlenir, etkinleştirilir veya durdurulur. Kampanya tarihleri, hedef ürün ya da kategoriler ve indirim değerleri kod değiştirmeden panel üzerinden ayarlanabilir.
+
+Desteklenen kampanya türleri:
+
+- Ürüne yüzdelik veya sabit tutarlı indirim
+- Kategoriye yüzdelik indirim
+- Aynı üründe **X Al Y Öde** kampanyası
+- Aynı kategoriden belirli sayıda farklı ürün alındığında en ucuz ürüne indirim
+- Kategori tutarı belirlenen eşiğe ulaştığında sabit tutarlı indirim
+- Ürün veya kategori koşullarının minimum adet/tutar değerleriyle birleştirilebildiği koşullu kampanya
+- Müşteriye özel cari iskonto oranı
+
+Hesaplama sırası şöyledir:
+
+1. Ürün ve satır bazlı kampanyalar uygulanır.
+2. Kategori veya sepet tutarına bağlı kampanyalar hesaplanır.
+3. Kalan tutar üzerinden müşterinin `discount_rate` oranı uygulanır.
+4. Satış ve satır indirim dökümleri kaydedilir; KDV bilgileri satış anındaki değerleriyle saklanır.
+
+Aynı satış satırı birden fazla kampanyaya uyuyorsa müşteriye en yüksek indirimi sağlayan kampanya seçilir. Böylece tek satıra iki kampanya uygulanmaz. Koşullu kampanyalarda ödül, koşulla eşleşen ürünlere veya panelde seçilen ürün/kategorilere yönlendirilebilir. Ödül hedefi sepette bulunmuyorsa indirim oluşturulmaz.
+
+İlgili veritabanı tablolarını ve alanlarını oluşturmak için:
+
+```bash
+php artisan migrate
+```
+
+Ayrıntılı teknik mimari ve hesaplama örnekleri için [İndirim motoru dokümanına](docs/discount-engine.md) bakabilirsiniz.
 
 ## API ve Webhook
 
