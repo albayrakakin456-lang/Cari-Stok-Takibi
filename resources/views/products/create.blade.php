@@ -37,6 +37,21 @@
                         <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="{{ __('e.g. 15.6 Laptop Backpack') }}" required>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Kategori</label>
+                        <div class="input-group">
+                            <select name="category_id" class="form-select">
+                                <option value="">Kategorisiz</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" @selected((string) old('category_id') === (string) $category->id)>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary">Kategori Yönet</a>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">{{ __('Stock Code') }} <span class="text-danger">*</span></label>

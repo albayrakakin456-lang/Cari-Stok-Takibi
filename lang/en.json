@@ -109,6 +109,8 @@
     "Address": "Address",
     "Notes": "Notes",
     "Save Contact": "Save Contact",
+    "Customer Discount Rate (%)": "Customer Discount Rate (%)",
+    "Applied to the remaining amount after campaign discounts.": "Applied to the remaining amount after campaign discounts.",
     "e.g. Ahmet Yilmaz or ABC Ltd.": "e.g. Ahmet Yilmaz or ABC Ltd.",
     "05XXXXXXXXX": "05XXXXXXXXX",
     "info@company.com": "info@company.com",

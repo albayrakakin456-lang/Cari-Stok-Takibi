@@ -42,6 +42,8 @@ class ContactController extends Controller
             'phone' => ['nullable', 'string', 'min:10', 'max:20', 'regex:/^[0-9+\s()\-]+$/'],
             'email' => 'nullable|email',
             'type' => 'required|in:customer,supplier',
+            // Kampanyalar bittikten sonra müşteriye uygulanacak son iskonto oranı.
+            'discount_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'address' => 'nullable|string',
             'note' => 'nullable|string'
         ], [

@@ -51,6 +51,8 @@ class InvoicePdfTest extends TestCase
             'product_id' => $product->id,
             'quantity' => 2,
             'unit_price' => 100,
+            'tax_rate' => 20,
+            'tax_amount' => 33.33,
             'total' => 200,
         ]);
 
@@ -72,6 +74,12 @@ class InvoicePdfTest extends TestCase
             ->assertHeader('content-type', 'application/pdf')
             ->assertDownload('FAT-PDF-1.pdf');
         $this->assertStringStartsWith('%PDF-', $saleResponse->getContent());
+
+        $sale->load(['contact', 'items.product', 'discounts']);
+        $saleHtml = view('pdf.invoice', ['invoice' => $sale, 'invoiceType' => 'sale'])->render();
+        $this->assertStringContainsString('KDV Tutarı', $saleHtml);
+        $this->assertStringContainsString('KDV TOPLAMI (DAHİL)', $saleHtml);
+        $this->assertStringContainsString('%20', $saleHtml);
 
         $purchaseResponse = $this->get(route('purchases.pdf', $purchase->id));
         $purchaseResponse->assertOk()

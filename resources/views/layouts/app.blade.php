@@ -89,6 +89,65 @@
             background-color: rgba(59, 130, 246, 0.2);
             font-weight: 600;
         }
+        .navbar-custom .dropdown-menu {
+            min-width: 220px;
+            padding: 0.5rem;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--card-bg);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        }
+        .navbar-custom .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: 8px;
+            color: var(--bs-body-color);
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+        .navbar-custom .dropdown-item:hover,
+        .navbar-custom .dropdown-item.active {
+            color: var(--primary-accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .navbar-custom .dropdown-item i {
+            width: 20px;
+            color: var(--primary-accent);
+            text-align: center;
+        }
+        .navbar-actions {
+            min-width: 0;
+        }
+        @media (max-width: 1399.98px) {
+            .navbar-custom .navbar-collapse {
+                max-height: calc(100vh - 76px);
+                overflow-y: auto;
+                padding: 0.8rem 0 0.4rem;
+            }
+            .navbar-custom .navbar-nav {
+                align-items: stretch !important;
+            }
+            .navbar-custom .nav-link {
+                width: 100%;
+                padding: 0.65rem 0.75rem !important;
+            }
+            .navbar-custom .dropdown-menu {
+                margin: 0.25rem 0 0.5rem 1rem;
+                border-color: rgba(255, 255, 255, 0.12);
+                background: rgba(255, 255, 255, 0.05);
+                box-shadow: none;
+            }
+            .navbar-custom .dropdown-item {
+                color: #cbd5e1;
+            }
+            .navbar-actions {
+                margin-top: 0.5rem;
+                padding-top: 0.8rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+            }
+        }
 
         /* Stok Kodu ve Rozet Stilleri */
         .stock-code-badge {
@@ -252,8 +311,8 @@
 
     @auth
     <!-- Üst Menü Navigasyonu -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-2 px-3 shadow-sm sticky-top">
-        <div class="container-fluid px-3 px-xl-4" style="max-width: 1400px;">
+    <nav class="navbar navbar-expand-xxl navbar-dark navbar-custom py-2 px-3 shadow-sm sticky-top">
+        <div class="container-fluid px-2 px-xl-3" style="max-width: 1640px;">
             <a class="navbar-brand text-white d-flex align-items-center gap-2 me-3" href="{{ route('dashboard') }}">
                 <span class="d-inline-flex p-2 bg-primary rounded-3 text-white">
                     <i class="bi bi-wallet2 fs-5"></i>
@@ -261,12 +320,12 @@
                 <span>Cari & Stok <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 fw-bold ms-1">PRO</span></span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Menüyü aç/kapat">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav me-auto ms-lg-2 gap-1 flex-row flex-wrap flex-lg-nowrap align-items-center">
+                <ul class="navbar-nav me-auto ms-xxl-2 gap-1 align-items-xxl-center">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <i class="bi bi-speedometer2"></i>
@@ -279,23 +338,23 @@
                             <span>{{ __('Contacts') }}</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                            <i class="bi bi-box-seam"></i>
-                            <span>{{ __('Products & Stock') }}</span>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('products.*', 'categories.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-box-seam"></i><span>Stok</span>
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> {{ __('Products & Stock') }}</a></li>
+                            <li><a class="dropdown-item {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}"><i class="bi bi-grid"></i> Kategoriler</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}">
-                            <i class="bi bi-receipt"></i>
-                            <span>{{ __('Sales Invoices') }}</span>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('sales.*', 'purchases.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-receipt-cutoff"></i><span>Faturalar</span>
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}" href="{{ route('purchases.index') }}">
-                            <i class="bi bi-truck"></i>
-                            <span>{{ __('Purchase Invoices') }}</span>
-                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}"><i class="bi bi-receipt"></i> {{ __('Sales Invoices') }}</a></li>
+                            <li><a class="dropdown-item {{ request()->routeIs('purchases.*') ? 'active' : '' }}" href="{{ route('purchases.index') }}"><i class="bi bi-truck"></i> {{ __('Purchase Invoices') }}</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('cash.*') ? 'active' : '' }}" href="{{ route('cash.index') }}">
@@ -303,17 +362,20 @@
                             <span>{{ __('Cash Ledger') }}</span>
                         </a>
                     </li>
-                    @if(Auth::user()->is_admin)
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}" href="{{ route('api-tokens.index') }}">
-                                <i class="bi bi-key"></i>
-                                <span>API Tokenları</span>
-                            </a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('campaigns.*') ? 'active' : '' }}" href="{{ route('campaigns.index') }}">
+                            <i class="bi bi-tags"></i>
+                            <span>Kampanyalar</span>
+                        </a>
+                    </li>
                 </ul>
 
-                <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0 flex-nowrap">
+                <div class="navbar-actions d-flex align-items-center gap-2 flex-wrap flex-xxl-nowrap">
+                    @if(Auth::user()->is_admin)
+                        <a class="btn btn-sm btn-outline-secondary text-white d-flex align-items-center gap-1 flex-shrink-0" href="{{ route('api-tokens.index') }}" title="API Tokenları" style="border-color: rgba(255,255,255,0.25);">
+                            <i class="bi bi-key"></i><span class="d-xxl-none">API Tokenları</span>
+                        </a>
+                    @endif
                     <!-- Dil Değiştirici Buton (TR / EN) -->
                     @if(app()->getLocale() === 'en')
                         <a href="{{ route('lang.switch', 'tr') }}" class="btn btn-sm btn-outline-secondary text-white d-flex align-items-center gap-1 rounded-pill px-2 py-1 flex-shrink-0" title="Türkçe'ye Geç" style="font-size: 0.78rem; font-weight: 700; border-color: rgba(255,255,255,0.25);">
@@ -334,7 +396,7 @@
                         <div class="rounded-circle bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-weight: 700; font-size: 0.85rem;">
                             {{ mb_strtoupper(mb_substr(Auth::user()->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                         </div>
-                        <span class="small fw-semibold text-nowrap" style="font-size: 0.85rem;">{{ Auth::user()->name }}</span>
+                        <span class="small fw-semibold text-nowrap d-none d-sm-inline" style="font-size: 0.85rem; max-width: 130px; overflow: hidden; text-overflow: ellipsis;">{{ Auth::user()->name }}</span>
                     </div>
 
                     <form action="{{ route('logout') }}" method="POST" class="d-inline mb-0 ms-1 flex-shrink-0">

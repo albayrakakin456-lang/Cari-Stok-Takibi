@@ -2,31 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sale;
-use App\Models\SaleItem;
-use App\Models\Product;
-use App\Models\Contact;
-use App\Models\StockMovement;
-use App\Models\CashTransaction;
 use App\Jobs\SendSaleNotification;
+use App\Models\CashTransaction;
+use App\Models\Contact;
+use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleDiscount;
+use App\Models\SaleItem;
+use App\Models\StockMovement;
+use App\Services\Discounts\DiscountEngine;
 use App\Services\WebhookDispatcher;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Transaction (İşlem Bütünlüğü) için   kilit sınıf
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request; // Transaction (İşlem Bütünlüğü) için   kilit sınıf
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rule;
 
 class SaleController extends Controller
 {
-    public function __construct(private readonly WebhookDispatcher $webhooks)
-    {
-    }
+    public function __construct(
+        private readonly WebhookDispatcher $webhooks,
+        private readonly DiscountEngine $discountEngine,
+    ) {}
 
     public function index()
     {
         // Satışları ve satışın sahibini (müşteriyi) beraber çekiyoruz
         $sales = Sale::with('contact')->latest()->get();
+
         return view('sales.index', compact('sales'));
     }
 
@@ -35,18 +39,19 @@ class SaleController extends Controller
         // Fatura keserken seçmek için müşterileri ve ürünleri forma yolluyoruz
         $contacts = Contact::where('type', 'customer')->get();
         $products = Product::all();
+
         return view('sales.create', compact('contacts', 'products'));
     }
 
     public function store(Request $request)
     {
         // Rate Limiting: Kullanıcı başına dakikada maksimum 30 satış oluşturma
-        $throttleKey = 'sale_store|' . auth()->id();
+        $throttleKey = 'sale_store|'.auth()->id();
         if (RateLimiter::tooManyAttempts($throttleKey, 30)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
             return back()->withInput()->withErrors([
-                'rate_limit' => "Çok sık satış faturası oluşturuyorsunuz. Lütfen {$seconds} saniye sonra tekrar deneyin."
+                'rate_limit' => "Çok sık satış faturası oluşturuyorsunuz. Lütfen {$seconds} saniye sonra tekrar deneyin.",
             ]);
         }
         RateLimiter::hit($throttleKey, 60);
@@ -79,67 +84,94 @@ class SaleController extends Controller
         foreach ($totalsPerProduct as $productId => $totalRequestedQty) {
             $product = Product::find($productId);
 
-            if (!$product || $product->stock < $totalRequestedQty) {
+            if (! $product || $product->stock < $totalRequestedQty) {
                 $available = $product ? $product->stock : 0;
                 $productName = $product ? $product->name : "Ürün #{$productId}";
+
                 return back()->withInput()->withErrors([
-                    'stock_error' => "Yetersiz Stok! '{$productName}' için depoda {$available} adet mevcut. Toplam {$totalRequestedQty} adet satılamaz. Eksi stokla satış engellendi."
+                    'stock_error' => "Yetersiz Stok! '{$productName}' için depoda {$available} adet mevcut. Toplam {$totalRequestedQty} adet satılamaz. Eksi stokla satış engellendi.",
                 ]);
             }
         }
+
+        $contact = Contact::findOrFail($request->contact_id);
+        $cart = collect($request->product_id)->map(fn ($productId, $index) => [
+            'product_id' => (int) $productId,
+            'quantity' => (int) $request->quantity[$index],
+        ])->all();
+
+        // Bütün fiyat ve kampanya hesapları tek bir merkezde, tanımlı öncelik sırasıyla yapılır.
+        $calculation = $this->discountEngine->calculate($cart, $contact);
 
         // 2. TRANSACTION BAŞLAT! (Geri dönülemez yola giriyoruz)
         DB::beginTransaction();
 
         try {
-            $totalAmount = 0; // Fatura toplamını hesaplamak için boş değişken
-
             // A. Fatura Başlığını Oluştur
             $sale = Sale::create([
                 'contact_id' => $request->contact_id,
-                'invoice_number' => 'FAT-' . time(), // Örn: FAT-1693746252
-                'total_amount' => 0, // Şimdilik 0, kalemleri toplayıp güncelleyeceğiz
+                'invoice_number' => 'FAT-'.time(), // Örn: FAT-1693746252
+                'subtotal' => $calculation['subtotal'],
+                'campaign_discount' => $calculation['campaign_discount'],
+                'customer_discount' => $calculation['customer_discount'],
+                'total_amount' => $calculation['total_amount'],
             ]);
 
-            // B. Formdan gelen ürünleri döngüye sok
-            foreach ($request->product_id as $index => $productId) {
-                $quantity = $request->quantity[$index];
-                // Tarayıcıdaki fiyat alanı değiştirilebilir; güvenilir fiyatı ürün kaydından alırız.
-                $product = Product::findOrFail($productId);
-                $unitPrice = (float) $product->sale_price;
-                $lineTotal = $quantity * $unitPrice;
-                $totalAmount += $lineTotal;
+            // İndirim dökümündeki item_index değerlerini gerçek SaleItem kayıtlarına bağlamak için tutulur.
+            $saleItems = [];
+
+            // B. Motor mükerrer ürünleri birleştirdiği için hesaplanmış kalemleri kaydet.
+            foreach ($calculation['items'] as $itemIndex => $item) {
+                $product = Product::findOrFail($item['product_id']);
 
                 // B1. Fatura Kalemini (SaleItem) Ekle
-                SaleItem::create([
+                $saleItems[$itemIndex] = SaleItem::create([
                     'sale_id' => $sale->id,
-                    'product_id' => $productId,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'total' => $lineTotal,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'original_price' => $item['original_price'],
+                    'discount_amount' => $item['discount_amount'],
+                    'tax_rate' => $item['tax_rate'],
+                    'tax_amount' => $item['tax_amount'],
+                    'unit_price' => $item['unit_price'],
+                    'total' => $item['total'],
                 ]);
 
                 // B2. Stok Hareketi Tablosuna (Çıkış) Kayıt At
                 StockMovement::create([
-                    'product_id' => $productId,
+                    'product_id' => $item['product_id'],
                     'type' => 'out', // Satış olduğu için stok çıkışı
-                    'quantity' => $quantity,
-                    'description' => $sale->invoice_number . ' numaralı faturayla satıldı'
+                    'quantity' => $item['quantity'],
+                    'description' => $sale->invoice_number.' numaralı faturayla satıldı',
                 ]);
 
                 // B3. Ürünün kendi stok miktarını düşür (decrement Laravel'in hazır fonksiyonudur)
-                $product->decrement('stock', $quantity);
+                $product->decrement('stock', $item['quantity']);
             }
 
-            // C. Fatura toplam tutarını hesapladığımız gerçek tutarla güncelle
-            $sale->update(['total_amount' => $totalAmount]);
+            // C. Uygulanan kampanya ve cari iskontolarının denetim kaydını oluştur.
+            foreach ($calculation['discounts'] as $discount) {
+                SaleDiscount::create([
+                    'sale_id' => $sale->id,
+                    'sale_item_id' => $discount['item_index'] !== null
+                        ? $saleItems[$discount['item_index']]->id
+                        : null,
+                    'campaign_id' => $discount['campaign_id'],
+                    'code' => $discount['code'],
+                    'campaign_name' => $discount['campaign_name'],
+                    'campaign_type' => $discount['campaign_type'],
+                    'description' => $discount['description'],
+                    'amount' => $discount['amount'],
+                    'metadata' => $discount['metadata'],
+                ]);
+            }
 
             // D. Kasa Hareketi (Para Girişi) Oluştur (Müşteri peşin ödedi varsayıyoruz)
             CashTransaction::create([
                 'contact_id' => $request->contact_id,
-                'type' => 'in', 
-                'amount' => $totalAmount,
-                'description' => $sale->invoice_number . ' numaralı satış tahsilatı'
+                'type' => 'in',
+                'amount' => $calculation['total_amount'],
+                'description' => $sale->invoice_number.' numaralı satış tahsilatı',
             ]);
 
             $this->webhooks->invoiceCreated(
@@ -151,7 +183,7 @@ class SaleController extends Controller
             DB::commit();
 
             // 4. MÜŞTERİYE SATIŞ BİLDİRİMİNİ ARKA PLANDA (QUEUE) GÖNDER!
-            // E-posta/SMS gönderimini burada bekletmiyoruz. 
+            // E-posta/SMS gönderimini burada bekletmiyoruz.
             // Kuyruğa Job atarak kullanıcının formda beklemesini engelliyoruz.
             SendSaleNotification::dispatch($sale);
 
@@ -160,11 +192,11 @@ class SaleController extends Controller
         } catch (\Throwable $e) {
             // 4. BİR YERDE HATA ÇIKTI, TÜM İŞLEMLERİ GERİ AL!
             DB::rollBack();
-            Log::error('Satış faturası kayıt hatası: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            
+            Log::error('Satış faturası kayıt hatası: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
             // Kullanıcıyı kullanıcı dostu hata mesajıyla forma geri gönder
             return back()->withInput()->withErrors([
-                'error' => 'Satış faturası oluşturulurken bir hata oluştu. Lütfen ürün ve miktar bilgilerini kontrol ediniz.'
+                'error' => 'Satış faturası oluşturulurken bir hata oluştu. Lütfen ürün ve miktar bilgilerini kontrol ediniz.',
             ]);
         }
     }
@@ -175,7 +207,8 @@ class SaleController extends Controller
     public function show(string $id)
     {
         // Eager Loading: N+1 problemini engelleyerek faturayı, müşteriyi ve kalemlerin ürünlerini tek pakette çekiyoruz
-        $sale = Sale::with(['contact', 'items.product'])->findOrFail($id);
+        $sale = Sale::with(['contact', 'items.product', 'discounts'])->findOrFail($id);
+
         return view('sales.show', compact('sale'));
     }
 
@@ -184,12 +217,12 @@ class SaleController extends Controller
      */
     public function downloadPdf(string $id)
     {
-        $sale = Sale::with(['contact', 'items.product'])->findOrFail($id);
+        $sale = Sale::with(['contact', 'items.product', 'discounts'])->findOrFail($id);
 
         return Pdf::loadView('pdf.invoice', [
             'invoice' => $sale,
             'invoiceType' => 'sale',
-        ])->setPaper('a4')->download($sale->invoice_number . '.pdf');
+        ])->setPaper('a4')->download($sale->invoice_number.'.pdf');
     }
 
     /**
@@ -221,7 +254,7 @@ class SaleController extends Controller
                             'sale_id' => $sale->id,
                             'type' => 'in',
                             'quantity' => $item->quantity,
-                            'description' => $sale->invoice_number . ' numaralı faturanın iptali (Stok İadesi)',
+                            'description' => $sale->invoice_number.' numaralı faturanın iptali (Stok İadesi)',
                         ]);
                     }
                 }
@@ -231,7 +264,7 @@ class SaleController extends Controller
                     'sale_id' => $sale->id,
                     'type' => 'out',
                     'amount' => $sale->total_amount,
-                    'description' => $sale->invoice_number . ' numaralı faturanın iptali (Tahsilat İadesi)',
+                    'description' => $sale->invoice_number.' numaralı faturanın iptali (Tahsilat İadesi)',
                 ]);
 
                 $sale->update([
@@ -255,7 +288,7 @@ class SaleController extends Controller
             );
 
         } catch (\Exception $e) {
-            return back()->withErrors('Fatura iptal edilirken bir hata oluştu: ' . $e->getMessage());
+            return back()->withErrors('Fatura iptal edilirken bir hata oluştu: '.$e->getMessage());
         }
     }
 }

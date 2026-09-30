@@ -9,7 +9,7 @@ class Product extends Model
 {
     use BelongsToUser;
 
-    protected $fillable = ['user_id', 'name', 'code', 'barcode', 'purchase_price', 'sale_price', 'tax_rate', 'stock', 'min_stock'];
+    protected $fillable = ['user_id', 'category_id', 'name', 'code', 'barcode', 'purchase_price', 'sale_price', 'tax_rate', 'stock', 'min_stock'];
 
     protected function casts(): array
     {
@@ -25,6 +25,11 @@ class Product extends Model
     public function stockMovements()
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function saleItems()

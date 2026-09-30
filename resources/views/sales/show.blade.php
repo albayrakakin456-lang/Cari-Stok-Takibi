@@ -102,30 +102,82 @@
                         <th>{{ __('Stock Code') }}</th>
                         <th>{{ __('Product Name') }}</th>
                         <th class="text-center">{{ __('Quantity') }}</th>
-                        <th class="text-end">{{ __('Unit Price') }}</th>
+                        <th class="text-end">Orijinal Fiyat</th>
+                        <th class="text-end">Satır İndirimi</th>
+                        <th class="text-center">KDV Oranı</th>
+                        <th class="text-end">KDV Tutarı</th>
                         <th class="text-end pe-4">{{ __('Total Amount') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($sale->items as $index => $item)
+                    @php
+                        $lineTaxRate = $item->tax_rate ?? $item->product?->tax_rate ?? 0;
+                        $lineTaxAmount = $item->tax_rate === null
+                            ? round((float) $item->total * $lineTaxRate / (100 + $lineTaxRate), 2)
+                            : (float) $item->tax_amount;
+                    @endphp
                     <tr>
                         <td class="ps-4 text-muted">{{ $index + 1 }}</td>
                         <td class="font-monospace fw-semibold">{{ $item->product->code ?? '-' }}</td>
                         <td>{{ $item->product->name ?? __('Deleted Product') }}</td>
                         <td class="text-center fw-semibold">{{ $item->quantity }}</td>
-                        <td class="text-end">{{ number_format($item->unit_price, 2) }} ₺</td>
+                        <td class="text-end">{{ number_format($item->original_price, 2, ',', '.') }} ₺</td>
+                        <td class="text-end text-danger">-{{ number_format($item->discount_amount, 2, ',', '.') }} ₺</td>
+                        <td class="text-center">%{{ $lineTaxRate }}</td>
+                        <td class="text-end">{{ number_format($lineTaxAmount, 2, ',', '.') }} ₺</td>
                         <td class="text-end pe-4 fw-bold">{{ number_format($item->total, 2) }} ₺</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot class="table-light">
                     <tr>
-                        <th colspan="5" class="text-end fs-5 py-3">{{ __('Grand Total:') }}</th>
-                        <th class="text-end fs-5 text-success pe-4 py-3">{{ number_format($sale->total_amount, 2) }} ₺</th>
+                        <th colspan="8" class="text-end">Ara Toplam:</th>
+                        <th class="text-end pe-4">{{ number_format($sale->subtotal, 2, ',', '.') }} ₺</th>
+                    </tr>
+                    <tr>
+                        <th colspan="8" class="text-end text-danger">Kampanya İndirimi:</th>
+                        <th class="text-end text-danger pe-4">-{{ number_format($sale->campaign_discount, 2, ',', '.') }} ₺</th>
+                    </tr>
+                    <tr>
+                        <th colspan="8" class="text-end text-danger">Cari İskontosu:</th>
+                        <th class="text-end text-danger pe-4">-{{ number_format($sale->customer_discount, 2, ',', '.') }} ₺</th>
+                    </tr>
+                    <tr>
+                        <th colspan="8" class="text-end">KDV Toplamı (Dahil):</th>
+                        <th class="text-end pe-4">{{ number_format($sale->items->sum(function ($item) {
+                            $rate = $item->tax_rate ?? $item->product?->tax_rate ?? 0;
+                            return $item->tax_rate === null
+                                ? round((float) $item->total * $rate / (100 + $rate), 2)
+                                : (float) $item->tax_amount;
+                        }), 2, ',', '.') }} ₺</th>
+                    </tr>
+                    <tr>
+                        <th colspan="8" class="text-end fs-5 py-3">Genel Toplam (KDV Dahil):</th>
+                        <th class="text-end fs-5 text-success pe-4 py-3">{{ number_format($sale->total_amount, 2, ',', '.') }} ₺</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 </div>
+
+@if($sale->discounts->isNotEmpty())
+    <div class="card border-0 shadow-sm rounded-4 mt-4">
+        <div class="card-header bg-transparent py-3 border-bottom">
+            <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-tags me-1"></i> Uygulanan İndirimler</h6>
+        </div>
+        <div class="list-group list-group-flush">
+            @foreach($sale->discounts as $discount)
+                <div class="list-group-item d-flex justify-content-between align-items-center gap-3 py-3">
+                    <div>
+                        <div class="fw-semibold">{{ $discount->campaign_name }}</div>
+                        <div class="small text-muted">{{ $discount->description }}</div>
+                    </div>
+                    <span class="fw-bold text-danger text-nowrap">-{{ number_format($discount->amount, 2, ',', '.') }} ₺</span>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
 @endsection

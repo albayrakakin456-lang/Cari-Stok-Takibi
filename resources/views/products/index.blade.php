@@ -7,10 +7,14 @@
         <div>
             <h2 class="fw-bold text-dark mb-0">{{ __('Products & Stock') }}</h2>
         </div>
-        <a href="{{ route('products.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
-            <i class="bi bi-plus-lg"></i>
-            <span>{{ __('Add New Product') }}</span>
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('categories.index') }}" class="btn btn-light border d-inline-flex align-items-center gap-2">
+                <i class="bi bi-grid"></i><span>Kategoriler</span>
+            </a>
+            <a href="{{ route('products.create') }}" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-plus-lg"></i><span>{{ __('Add New Product') }}</span>
+            </a>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 overflow-hidden">
@@ -21,6 +25,7 @@
                         <tr>
                             <th>{{ __('Stock Code') }}</th>
                             <th>{{ __('Product Name') }}</th>
+                            <th>Kategori</th>
                             <th>{{ __('Purchase Price') }}</th>
                             <th>{{ __('Sale Price') }}</th>
                             <th class="text-center">{{ __('Current Stock') }}</th>
@@ -32,6 +37,7 @@
                         <tr>
                             <td><span class="stock-code-badge">{{ $product->code ?? '-' }}</span></td>
                             <td class="fw-bold text-dark">{{ $product->name }}</td>
+                            <td>{{ $product->category?->name ?? 'Kategorisiz' }}</td>
                             <td>₺{{ number_format($product->purchase_price, 2, ',', '.') }}</td>
                             <td>₺{{ number_format($product->sale_price, 2, ',', '.') }}</td>
                             <td class="text-center">
@@ -48,7 +54,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-5">
+                            <td colspan="7" class="text-center text-muted py-5">
                                 <i class="bi bi-box-seam fs-1 text-secondary opacity-50 d-block mb-2"></i>
                                 {{ __('No products found.') }}
                             </td>

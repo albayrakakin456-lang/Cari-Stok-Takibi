@@ -109,6 +109,8 @@
     "Address": "Adres",
     "Notes": "Notlar",
     "Save Contact": "Cariyi Kaydet",
+    "Customer Discount Rate (%)": "Cari İskonto Oranı (%)",
+    "Applied to the remaining amount after campaign discounts.": "Kampanya indirimlerinden sonra kalan tutara uygulanır.",
     "e.g. Ahmet Yilmaz or ABC Ltd.": "Örn: Ahmet Yılmaz veya ABC Ltd. Şti.",
     "05XXXXXXXXX": "05XXXXXXXXX",
     "info@company.com": "ornek@firma.com",

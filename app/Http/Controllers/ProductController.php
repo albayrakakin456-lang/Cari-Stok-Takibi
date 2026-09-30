@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
@@ -14,7 +16,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::with('category')->latest()->get();
+
         return view('products.index', compact('products'));
     }
 
@@ -23,7 +26,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $categories = Category::query()->orderBy('name')->get();
+
+        return view('products.create', compact('categories'));
     }
 
     /**
@@ -32,11 +37,12 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // 0. Rate Limiting (Kötüye Kullanım Koruması: Dakikada max 30 istek)
-        $throttleKey = 'product-store:' . (auth()->id() ?? $request->ip());
+        $throttleKey = 'product-store:'.(auth()->id() ?? $request->ip());
         if (RateLimiter::tooManyAttempts($throttleKey, 30)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+
             return back()->withInput()->withErrors([
-                'rate_limit' => __('Too many requests. Please wait :seconds seconds before trying again.', ['seconds' => $seconds])
+                'rate_limit' => __('Too many requests. Please wait :seconds seconds before trying again.', ['seconds' => $seconds]),
             ]);
         }
         RateLimiter::hit($throttleKey, 60);
@@ -44,6 +50,10 @@ class ProductController extends Controller
         // 1. Formdan gelen verileri doğrula (Validation)
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'category_id' => [
+                'nullable',
+                Rule::exists('categories', 'id')->where('user_id', auth()->id()),
+            ],
             // Kullanıcı bazlı benzersiz stok kodu kontrolü + min/max uzunluk + regex
             'code' => [
                 'required',
@@ -59,7 +69,7 @@ class ProductController extends Controller
             'sale_price' => 'required|numeric|min:0',
             'tax_rate' => 'required|integer|min:0|max:100',
             'min_stock' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0' // Başlangıç stoğu artık zorunludur!
+            'stock' => 'required|integer|min:0', // Başlangıç stoğu artık zorunludur!
         ], [
             'name.required' => __('Product name is required.'),
             'code.required' => __('Stock code is required.'),
@@ -81,14 +91,14 @@ class ProductController extends Controller
         // 2. Doğrulanan veriyi kullanarak ürünü veritabanına kaydet
         $product = Product::create($validatedData);
 
-        // Muhasebe Kuralı: Stok asla hareketsiz değişemez! 
+        // Muhasebe Kuralı: Stok asla hareketsiz değişemez!
         // Eğer başlangıç stoğu girildiyse bunu ilk stok hareketi (Giriş) olarak kaydediyoruz.
         if ($product->stock > 0) {
-            \App\Models\StockMovement::create([
+            StockMovement::create([
                 'product_id' => $product->id,
                 'type' => 'in',
                 'quantity' => $product->stock,
-                'description' => 'Açılış / Sayım Stoğu Girişi'
+                'description' => 'Açılış / Sayım Stoğu Girişi',
             ]);
         }
 
@@ -110,7 +120,7 @@ class ProductController extends Controller
         // 2. Depo İstatistikleri: Toplam giren ve çıkan adetler
         $totalIn = $product->stockMovements->where('type', 'in')->sum('quantity');
         $totalOut = $product->stockMovements->where('type', 'out')->sum('quantity');
-    
+
         // 3. Finansal Stok Değeri: Depodaki malın maliyeti ve potansiyel cirosu
         $stockCostValue = $product->stock * $product->purchase_price;
         $stockSaleValue = $product->stock * $product->sale_price;
@@ -118,4 +128,3 @@ class ProductController extends Controller
         return view('products.show', compact('product', 'totalIn', 'totalOut', 'stockCostValue', 'stockSaleValue'));
     }
 }
-   

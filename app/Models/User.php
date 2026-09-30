@@ -80,4 +80,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(WebhookEndpoint::class);
     }
+
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class);
+    }
+
+    public function saleDiscounts()
+    {
+        return $this->hasMany(SaleDiscount::class);
+    }
 }

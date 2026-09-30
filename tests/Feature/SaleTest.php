@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Enums\CampaignTargetType;
+use App\Enums\CampaignType;
 use App\Jobs\DeliverWebhook;
 use App\Jobs\SendSaleNotification;
+use App\Models\Campaign;
 use App\Models\Contact;
 use App\Models\Product;
 use App\Models\User;
@@ -31,7 +34,7 @@ class SaleTest extends TestCase
         ]);
 
         $html = $this->get('/sales/create')->assertOk()->getContent();
-        $document = new \DOMDocument();
+        $document = new \DOMDocument;
         @$document->loadHTML('<?xml encoding="UTF-8">'.$html);
         $xpath = new \DOMXPath($document);
         $priceInput = $xpath->query('//input[@name="unit_price[]"]')->item(0);
@@ -72,7 +75,17 @@ class SaleTest extends TestCase
             'min_stock' => 2,
         ]);
 
-        // 2. Act: Müşteriye 3 adet klavye satışı yap (Toplam: 3 x 250 = 750 TL)
+        $campaign = Campaign::create([
+            'name' => '3 Al 2 Öde',
+            'type' => CampaignType::BuyXPayY,
+            'parameters' => ['buy_quantity' => 3, 'pay_quantity' => 2],
+        ]);
+        $campaign->targets()->create([
+            'target_type' => CampaignTargetType::Product,
+            'target_id' => $product->id,
+        ]);
+
+        // 2. Act: 3 adet klavyede "3 al 2 öde" uygulanır (brüt 750, net 500 TL).
         $response = $this->actingAs($user)->post('/sales', [
             'contact_id' => $customer->id,
             'product_id' => [$product->id],
@@ -83,20 +96,20 @@ class SaleTest extends TestCase
         // 3. Assert (Kritik Kontroller):
         $response->assertRedirect(route('sales.index'));
 
-        // A. Fatura tablosunda 750 TL'lik kayıt var mı?
+        // A. Fatura tablosunda kampanya sonrası 500 TL'lik kayıt var mı?
         $this->assertDatabaseHas('sales', [
             'contact_id' => $customer->id,
-            'total_amount' => 750,
+            'total_amount' => 500,
         ]);
 
         // B. Ürün stoğu 10'dan 7'ye düştü mü? (10 - 3 = 7)
         $this->assertEquals(7, $product->fresh()->stock);
 
-        // C. Kasaya 750 TL nakit girişi işlendi mi?
+        // C. Kasaya indirim sonrası 500 TL nakit girişi işlendi mi?
         $this->assertDatabaseHas('cash_transactions', [
             'contact_id' => $customer->id,
             'type' => 'in',
-            'amount' => 750,
+            'amount' => 500,
         ]);
 
         // D. Arka plan kuyruğuna SendSaleNotification görevi gönderildi mi?
@@ -241,6 +254,8 @@ class SaleTest extends TestCase
             'product_id' => $product->id,
             'quantity' => 1,
             'unit_price' => 450,
+            'tax_rate' => 20,
+            'tax_amount' => 75,
             'total' => 450,
         ]);
 

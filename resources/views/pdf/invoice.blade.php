@@ -21,6 +21,7 @@
         .items .center { text-align: center; }
         .total-label { text-align: right; font-size: 14px; font-weight: bold; padding-top: 14px; }
         .total { text-align: right; color: #166534; font-size: 16px; font-weight: bold; padding-top: 14px; }
+        .discount { text-align: right; color: #b91c1c; font-weight: bold; }
         .footer { position: fixed; bottom: -12px; left: 0; right: 0; text-align: center; color: #9ca3af; font-size: 9px; }
     </style>
 </head>
@@ -29,6 +30,13 @@
         $isSale = $invoiceType === 'sale';
         $title = $isSale ? 'SATIŞ FATURASI' : 'ALIŞ FATURASI';
         $partyTitle = $isSale ? 'Müşteri Bilgileri' : 'Tedarikçi Bilgileri';
+        $totalTax = $invoice->items->sum(function ($item) {
+            $rate = $item->tax_rate ?? $item->product?->tax_rate ?? 0;
+
+            return $item->tax_rate === null
+                ? round((float) $item->total * $rate / (100 + $rate), 2)
+                : (float) $item->tax_amount;
+        });
     @endphp
 
     <table class="header" width="100%">
@@ -78,29 +86,66 @@
                 <th style="width: 95px;">Stok Kodu</th>
                 <th>Ürün</th>
                 <th class="center" style="width: 60px;">Miktar</th>
-                <th class="number" style="width: 90px;">Birim Fiyat</th>
-                <th class="number" style="width: 90px;">Tutar</th>
+                <th class="number" style="width: 72px;">Birim Fiyat</th>
+                <th class="center" style="width: 42px;">KDV</th>
+                <th class="number" style="width: 68px;">KDV Tutarı</th>
+                <th class="number" style="width: 78px;">Tutar</th>
             </tr>
         </thead>
         <tbody>
             @foreach($invoice->items as $index => $item)
+                @php
+                    $lineTaxRate = $item->tax_rate ?? $item->product?->tax_rate ?? 0;
+                    $lineTaxAmount = $item->tax_rate === null
+                        ? round((float) $item->total * $lineTaxRate / (100 + $lineTaxRate), 2)
+                        : (float) $item->tax_amount;
+                @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->product->code ?? '-' }}</td>
                     <td>{{ $item->product->name ?? 'Silinmiş Ürün' }}</td>
                     <td class="center">{{ $item->quantity }}</td>
                     <td class="number">{{ number_format($item->unit_price, 2, ',', '.') }} TL</td>
+                    <td class="center">%{{ $lineTaxRate }}</td>
+                    <td class="number">{{ number_format($lineTaxAmount, 2, ',', '.') }} TL</td>
                     <td class="number">{{ number_format($item->total, 2, ',', '.') }} TL</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
+            @if($isSale)
+                <tr>
+                    <td colspan="7" class="total-label">ARA TOPLAM</td>
+                    <td class="number">{{ number_format($invoice->subtotal, 2, ',', '.') }} TL</td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="total-label">KAMPANYA İNDİRİMİ</td>
+                    <td class="discount">-{{ number_format($invoice->campaign_discount, 2, ',', '.') }} TL</td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="total-label">CARİ İSKONTOSU</td>
+                    <td class="discount">-{{ number_format($invoice->customer_discount, 2, ',', '.') }} TL</td>
+                </tr>
+            @endif
             <tr>
-                <td colspan="5" class="total-label">GENEL TOPLAM</td>
+                <td colspan="7" class="total-label">KDV TOPLAMI (DAHİL)</td>
+                <td class="number">{{ number_format($totalTax, 2, ',', '.') }} TL</td>
+            </tr>
+            <tr>
+                <td colspan="7" class="total-label">GENEL TOPLAM (KDV DAHİL)</td>
                 <td class="total">{{ number_format($invoice->total_amount, 2, ',', '.') }} TL</td>
             </tr>
         </tfoot>
     </table>
+
+    @if($isSale && $invoice->discounts->isNotEmpty())
+        <div style="font-size: 12px; font-weight: bold; margin-top: 20px;">Uygulanan İndirimler</div>
+        <ul>
+            @foreach($invoice->discounts as $discount)
+                <li>{{ $discount->campaign_name }} — {{ $discount->description }}: -{{ number_format($discount->amount, 2, ',', '.') }} TL</li>
+            @endforeach
+        </ul>
+    @endif
 
     <div class="footer">Bu belge Cari &amp; Stok Takip PRO tarafından oluşturulmuştur.</div>
 </body>

@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\WebhookDeliveryController;
 use App\Http\Controllers\Api\WebhookEndpointController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Http;
 /*
 |--------------------------------------------------------------------------
 | Dış Servis API v1
@@ -43,4 +43,17 @@ Route::prefix('v1')->group(function () {
             Route::post('/webhook-endpoints/{id}/test', [WebhookEndpointController::class, 'test'])->whereNumber('id');
         });
     });
+});
+Route::get('/external-users/{id}', function (int $id) {
+    $response = Http::get(
+        "https://jsonplaceholder.typicode.com/users/{$id}"
+    );
+
+    $user = $response->json();
+
+    return [
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'city' => $user['address']['city'],
+    ];
 });

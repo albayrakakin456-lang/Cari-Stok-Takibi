@@ -15,6 +15,9 @@ class Sale extends Model
         'invoice_number',
         'external_reference',
         'request_fingerprint',
+        'subtotal',
+        'campaign_discount',
+        'customer_discount',
         'total_amount',
         'status',
         'cancelled_at',
@@ -23,6 +26,9 @@ class Sale extends Model
     protected function casts(): array
     {
         return [
+            'subtotal' => 'decimal:2',
+            'campaign_discount' => 'decimal:2',
+            'customer_discount' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'cancelled_at' => 'datetime',
         ];
@@ -36,5 +42,10 @@ class Sale extends Model
     public function items()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function discounts()
+    {
+        return $this->hasMany(SaleDiscount::class);
     }
 }

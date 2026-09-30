@@ -2,15 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Contact;
 use App\Models\Product;
-use App\Models\Sale;
-use App\Models\SaleItem;
 use App\Models\Purchase;
-use App\Models\PurchaseItem;
-use App\Models\CashTransaction;
+use App\Models\Sale;
 use App\Models\StockMovement;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,6 +16,7 @@ class ComprehensiveSecurityTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected User $otherUser;
 
     protected function setUp(): void
@@ -99,8 +97,8 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/contacts/{$otherContact->id}")
-             ->assertStatus(404);
+            ->get("/contacts/{$otherContact->id}")
+            ->assertStatus(404);
     }
 
     /** @test */
@@ -118,8 +116,8 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/products/{$otherProduct->id}")
-             ->assertStatus(404);
+            ->get("/products/{$otherProduct->id}")
+            ->assertStatus(404);
     }
 
     /** @test */
@@ -138,8 +136,8 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/sales/{$otherSale->id}")
-             ->assertStatus(404);
+            ->get("/sales/{$otherSale->id}")
+            ->assertStatus(404);
     }
 
     /** @test */
@@ -158,8 +156,8 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/purchases/{$otherPurchase->id}")
-             ->assertStatus(404);
+            ->get("/purchases/{$otherPurchase->id}")
+            ->assertStatus(404);
     }
 
     /** @test */
@@ -265,7 +263,7 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->delete("/sales/{$otherSale->id}");
+            ->delete("/sales/{$otherSale->id}");
 
         // Fatura kesinlikle silinmemiş olmalı (tenant izolasyonu korudu)
         $this->assertDatabaseHas('sales', ['id' => $otherSale->id]);
@@ -399,6 +397,8 @@ class ComprehensiveSecurityTest extends TestCase
         // Fatura oluşmuş olmalı
         $this->assertDatabaseHas('sales', [
             'contact_id' => $customer->id,
+            'subtotal' => 300,
+            'campaign_discount' => 0,
             'total_amount' => 300,
         ]);
 
@@ -406,6 +406,8 @@ class ComprehensiveSecurityTest extends TestCase
         $this->assertDatabaseHas('sale_items', [
             'product_id' => $product->id,
             'quantity' => 3,
+            'original_price' => 100,
+            'discount_amount' => 0,
             'unit_price' => 100,
             'total' => 300,
         ]);
@@ -468,8 +470,12 @@ class ComprehensiveSecurityTest extends TestCase
         $this->assertEquals(45, $product1->fresh()->stock);  // 50 - 5
         $this->assertEquals(28, $product2->fresh()->stock);  // 30 - 2
 
-        // Toplam fatura tutarı: (5*20) + (2*60) = 100 + 120 = 220
-        $this->assertDatabaseHas('sales', ['total_amount' => 220]);
+        // Aktif kampanya olmadığı için brüt ve net toplam 220 TL'dir.
+        $this->assertDatabaseHas('sales', [
+            'subtotal' => 220,
+            'campaign_discount' => 0,
+            'total_amount' => 220,
+        ]);
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -872,9 +878,9 @@ class ComprehensiveSecurityTest extends TestCase
     public function dashboard_loads_successfully_for_authenticated_user()
     {
         $this->actingAs($this->user)
-             ->get('/')
-             ->assertOk()
-             ->assertViewIs('dashboard');
+            ->get('/')
+            ->assertOk()
+            ->assertViewIs('dashboard');
     }
 
     /** @test */
@@ -950,10 +956,10 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/contacts/{$customer->id}")
-             ->assertOk()
-             ->assertViewIs('contacts.show')
-             ->assertSee('Show Müşterisi');
+            ->get("/contacts/{$customer->id}")
+            ->assertOk()
+            ->assertViewIs('contacts.show')
+            ->assertSee('Show Müşterisi');
     }
 
     /** @test */
@@ -966,10 +972,10 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/contacts/{$supplier->id}")
-             ->assertOk()
-             ->assertViewIs('contacts.show')
-             ->assertSee('Show Tedarikçisi');
+            ->get("/contacts/{$supplier->id}")
+            ->assertOk()
+            ->assertViewIs('contacts.show')
+            ->assertSee('Show Tedarikçisi');
     }
 
     /** @test */
@@ -994,10 +1000,10 @@ class ComprehensiveSecurityTest extends TestCase
         ]);
 
         $this->actingAs($this->user)
-             ->get("/products/{$product->id}")
-             ->assertOk()
-             ->assertViewIs('products.show')
-             ->assertSee('Show Ürünü');
+            ->get("/products/{$product->id}")
+            ->assertOk()
+            ->assertViewIs('products.show')
+            ->assertSee('Show Ürünü');
     }
 
     /** @test */
@@ -1081,16 +1087,16 @@ class ComprehensiveSecurityTest extends TestCase
     public function authenticated_user_cannot_access_login_page()
     {
         $this->actingAs($this->user)
-             ->get('/login')
-             ->assertRedirect('/');
+            ->get('/login')
+            ->assertRedirect('/');
     }
 
     /** @test */
     public function authenticated_user_cannot_access_register_page()
     {
         $this->actingAs($this->user)
-             ->get('/register')
-             ->assertRedirect('/');
+            ->get('/register')
+            ->assertRedirect('/');
     }
 
     // ════════════════════════════════════════════════════════════════

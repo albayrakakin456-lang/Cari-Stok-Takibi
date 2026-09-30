@@ -46,6 +46,26 @@
                         </select>
                     </div>
 
+                    {{-- Bu oran kampanya indirimlerinden sonra kalan fatura tutarına uygulanır. --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('Customer Discount Rate (%)') }}</label>
+                        <div class="input-group">
+                            <input
+                                type="number"
+                                name="discount_rate"
+                                class="form-control"
+                                value="{{ old('discount_rate', 0) }}"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                            >
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <div class="form-text small">
+                            {{ __('Applied to the remaining amount after campaign discounts.') }}
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">{{ __('Phone') }}</label>
@@ -89,4 +109,3 @@
     </div>
 </div>
 @endsection
-
