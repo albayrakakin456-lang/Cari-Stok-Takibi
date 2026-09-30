@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Kampanyalar - Cari & Stok Takip')
+@section('title', __('Campaigns').' - Cari & Stok Takip')
 
 @section('content')
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
-            <h2 class="fw-bold text-dark mb-1">Kampanyalar</h2>
-            <p class="text-muted mb-0">Satışlarda uygulanacak indirim kurallarını yönetin.</p>
+            <h2 class="fw-bold text-dark mb-1">{{ __('Campaigns') }}</h2>
+            <p class="text-muted mb-0">{{ __('Manage discount rules applied to sales.') }}</p>
         </div>
         <a href="{{ route('campaigns.create') }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2 shadow-sm">
             <i class="bi bi-plus-lg"></i>
-            <span>Yeni Kampanya</span>
+            <span>{{ __('New Campaign') }}</span>
         </a>
     </div>
 
@@ -20,12 +20,12 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Kampanya</th>
-                            <th>Tür</th>
-                            <th>Hedef</th>
-                            <th>Tarih</th>
-                            <th class="text-center">Durum</th>
-                            <th class="text-end">İşlemler</th>
+                            <th>{{ __('Campaign') }}</th>
+                            <th>{{ __('Type') }}</th>
+                            <th>{{ __('Target') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th class="text-center">{{ __('Status') }}</th>
+                            <th class="text-end">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,14 +43,14 @@
                                     </span>
                                     @if($campaign->is_exclusive)
                                         <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle mt-1">
-                                            Birleşmez
+                                            {{ __('Exclusive') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td style="min-width: 180px;">
                                     @if($campaign->type === \App\Enums\CampaignType::Conditional)
                                         <span class="badge bg-info-subtle text-info-emphasis border">
-                                            Dinamik koşullara göre
+                                            {{ __('Based on dynamic conditions') }}
                                         </span>
                                     @endif
                                     @foreach($campaign->targets->take(2) as $target)
@@ -64,39 +64,39 @@
                                         </span>
                                     @endforeach
                                     @if($campaign->targets->count() > 2)
-                                        <span class="small text-muted">+{{ $campaign->targets->count() - 2 }} hedef</span>
+                                        <span class="small text-muted">+{{ $campaign->targets->count() - 2 }} {{ __('targets') }}</span>
                                     @endif
                                 </td>
                                 <td class="small text-muted text-nowrap">
-                                    <div>{{ $campaign->starts_at?->format('d.m.Y H:i') ?? 'Hemen' }}</div>
-                                    <div>{{ $campaign->ends_at?->format('d.m.Y H:i') ?? 'Süresiz' }}</div>
+                                    <div>{{ $campaign->starts_at?->format('d.m.Y H:i') ?? __('Immediately') }}</div>
+                                    <div>{{ $campaign->ends_at?->format('d.m.Y H:i') ?? __('No end date') }}</div>
                                 </td>
                                 <td class="text-center">
                                     @if($campaign->isActiveAt())
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Aktif</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">{{ __('Active') }}</span>
                                     @elseif($campaign->is_active)
-                                        <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">Planlandı / Süresi Doldu</span>
+                                        <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">{{ __('Scheduled / Expired') }}</span>
                                     @else
-                                        <span class="badge bg-secondary-subtle text-secondary border">Pasif</span>
+                                        <span class="badge bg-secondary-subtle text-secondary border">{{ __('Inactive') }}</span>
                                     @endif
                                 </td>
                                 <td class="text-end text-nowrap">
-                                    <a href="{{ route('campaigns.edit', $campaign) }}" class="btn btn-sm btn-light border" title="Düzenle">
+                                    <a href="{{ route('campaigns.edit', $campaign) }}" class="btn btn-sm btn-light border" title="{{ __('Edit') }}">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     <form action="{{ route('campaigns.toggle', $campaign) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="btn btn-sm {{ $campaign->is_active ? 'btn-outline-warning' : 'btn-outline-success' }}" title="{{ $campaign->is_active ? 'Durdur' : 'Etkinleştir' }}">
+                                        <button type="submit" class="btn btn-sm {{ $campaign->is_active ? 'btn-outline-warning' : 'btn-outline-success' }}" title="{{ $campaign->is_active ? __('Pause') : __('Activate') }}">
                                             <i class="bi {{ $campaign->is_active ? 'bi-pause-fill' : 'bi-play-fill' }}"></i>
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('campaigns.destroy', $campaign) }}" method="POST" class="d-inline" onsubmit="return confirm('Bu kampanyayı arşivlemek istediğinize emin misiniz?')">
+                                    <form action="{{ route('campaigns.destroy', $campaign) }}" method="POST" class="d-inline" onsubmit="return confirm(@js(__('Are you sure you want to archive this campaign?')))">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Arşivle">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('Archive') }}">
                                             <i class="bi bi-archive"></i>
                                         </button>
                                     </form>
@@ -107,10 +107,10 @@
                                 <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-tags fs-1 text-secondary opacity-50 d-block mb-2"></i>
-                                        <div class="fw-semibold text-dark">Henüz kampanya yok</div>
-                                        <p class="small mb-3">İlk indirim kuralınızı oluşturarak başlayın.</p>
+                                        <div class="fw-semibold text-dark">{{ __('No campaigns yet') }}</div>
+                                        <p class="small mb-3">{{ __('Start by creating your first discount rule.') }}</p>
                                         <a href="{{ route('campaigns.create') }}" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-plus-lg me-1"></i> Yeni Kampanya
+                                            <i class="bi bi-plus-lg me-1"></i> {{ __('New Campaign') }}
                                         </a>
                                     </div>
                                 </td>

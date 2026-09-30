@@ -340,16 +340,16 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->routeIs('products.*', 'categories.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-box-seam"></i><span>Stok</span>
+                            <i class="bi bi-box-seam"></i><span>{{ __('Stock') }}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> {{ __('Products & Stock') }}</a></li>
-                            <li><a class="dropdown-item {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}"><i class="bi bi-grid"></i> Kategoriler</a></li>
+                            <li><a class="dropdown-item {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}"><i class="bi bi-grid"></i> {{ __('Categories') }}</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->routeIs('sales.*', 'purchases.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-receipt-cutoff"></i><span>Faturalar</span>
+                            <i class="bi bi-receipt-cutoff"></i><span>{{ __('Invoices') }}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}"><i class="bi bi-receipt"></i> {{ __('Sales Invoices') }}</a></li>
@@ -365,7 +365,7 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('campaigns.*') ? 'active' : '' }}" href="{{ route('campaigns.index') }}">
                             <i class="bi bi-tags"></i>
-                            <span>Kampanyalar</span>
+                            <span>{{ __('Campaigns') }}</span>
                         </a>
                     </li>
                 </ul>

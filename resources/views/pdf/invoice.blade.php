@@ -87,8 +87,8 @@
                 <th>Ürün</th>
                 <th class="center" style="width: 60px;">Miktar</th>
                 <th class="number" style="width: 72px;">Birim Fiyat</th>
-                <th class="center" style="width: 42px;">KDV</th>
-                <th class="number" style="width: 68px;">KDV Tutarı</th>
+                <th class="center" style="width: 42px;">{{ __('VAT') }}</th>
+                <th class="number" style="width: 68px;">{{ __('VAT Amount') }}</th>
                 <th class="number" style="width: 78px;">Tutar</th>
             </tr>
         </thead>
@@ -128,11 +128,11 @@
                 </tr>
             @endif
             <tr>
-                <td colspan="7" class="total-label">KDV TOPLAMI (DAHİL)</td>
+                <td colspan="7" class="total-label">{{ __('VAT TOTAL (INCLUDED)') }}</td>
                 <td class="number">{{ number_format($totalTax, 2, ',', '.') }} TL</td>
             </tr>
             <tr>
-                <td colspan="7" class="total-label">GENEL TOPLAM (KDV DAHİL)</td>
+                <td colspan="7" class="total-label">{{ __('GRAND TOTAL (VAT INCLUDED)') }}</td>
                 <td class="total">{{ number_format($invoice->total_amount, 2, ',', '.') }} TL</td>
             </tr>
         </tfoot>

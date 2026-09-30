@@ -1,7 +1,7 @@
 <div class="campaign-parameters d-none" data-campaign-type="conditional">
     <div class="alert alert-primary border-0 mb-4">
         <i class="bi bi-diagram-3 me-1"></i>
-        Sepetteki ürün veya kategori koşulları sağlandığında aşağıdaki ödül uygulanır.
+        {{ __('The reward below is applied when the cart conditions are met.') }}
     </div>
 
     <div id="conditionalConditionList" class="vstack gap-3">
@@ -11,33 +11,33 @@
     </div>
 
     <button type="button" id="addConditionalCondition" class="btn btn-outline-primary w-100 mt-3" disabled>
-        <i class="bi bi-plus-lg me-1"></i> Kural Ekle
+        <i class="bi bi-plus-lg me-1"></i> {{ __('Add Rule') }}
     </button>
 
     <hr class="my-4">
-    <h6 class="fw-bold mb-3"><i class="bi bi-gift me-1"></i> Ödül</h6>
+    <h6 class="fw-bold mb-3"><i class="bi bi-gift me-1"></i> {{ __('Reward') }}</h6>
 
     <div class="row g-3">
         <div class="col-md-4">
-            <label class="form-label fw-semibold">İndirim Türü *</label>
+            <label class="form-label fw-semibold">{{ __('Discount Type') }} *</label>
             <select name="parameters[reward_type]" class="form-select" disabled>
-                <option value="percentage" @selected(($parameters['reward_type'] ?? 'percentage') === 'percentage')>Yüzde indirim</option>
-                <option value="fixed" @selected(($parameters['reward_type'] ?? '') === 'fixed')>Sabit tutar indirimi</option>
+                <option value="percentage" @selected(($parameters['reward_type'] ?? 'percentage') === 'percentage')>{{ __('Percentage discount') }}</option>
+                <option value="fixed" @selected(($parameters['reward_type'] ?? '') === 'fixed')>{{ __('Fixed amount discount') }}</option>
             </select>
         </div>
         <div class="col-md-4">
-            <label class="form-label fw-semibold">İndirim Değeri *</label>
+            <label class="form-label fw-semibold">{{ __('Discount Value') }} *</label>
             <input type="number" name="parameters[reward_value]" value="{{ $parameters['reward_value'] ?? '' }}" class="form-control" min="0.01" step="0.01" placeholder="Örn: 10" disabled>
         </div>
         <div class="col-md-4">
-            <label class="form-label fw-semibold">İndirim Nereye Uygulansın? *</label>
+            <label class="form-label fw-semibold">{{ __('Where should the discount be applied?') }} *</label>
             <select name="parameters[reward_scope]" id="conditionalRewardScope" class="form-select" disabled>
-                <option value="matching_items" @selected(($parameters['reward_scope'] ?? 'matching_items') === 'matching_items')>Koşulla eşleşen ürünlere</option>
-                <option value="selected_products" @selected(($parameters['reward_scope'] ?? '') === 'selected_products')>Belirli ürünlere</option>
-                <option value="selected_categories" @selected(($parameters['reward_scope'] ?? '') === 'selected_categories')>Belirli kategorilere</option>
+                <option value="matching_items" @selected(($parameters['reward_scope'] ?? 'matching_items') === 'matching_items')>{{ __('Items matching the rule') }}</option>
+                <option value="selected_products" @selected(($parameters['reward_scope'] ?? '') === 'selected_products')>{{ __('Selected products') }}</option>
+                <option value="selected_categories" @selected(($parameters['reward_scope'] ?? '') === 'selected_categories')>{{ __('Selected categories') }}</option>
             </select>
             <div class="form-text">
-                Seçilen ödül ürünleri/kategorileri sepette yoksa koşul sağlansa bile indirim oluşmaz.
+                {{ __('No discount is created if the selected reward products or categories are not in the cart.') }}
             </div>
         </div>
         <div class="col-12">
@@ -65,11 +65,10 @@
                     disabled
                 >
                 <label class="form-check-label fw-semibold" for="conditionalRepeatReward">
-                    Eşik katlandıkça indirimi artır
+                    {{ __('Increase the discount as the threshold repeats') }}
                 </label>
                 <div class="form-text">
-                    Kapalı olduğunda kampanya ödülü bir kez verilir. Açık olduğunda eşik kaç kat sağlanırsa indirim de o kadar artar.
-                    Örneğin 3 adet eşiğinde 100 TL indirim varsa, 6 adet için 200 TL uygulanır. Yüzde ödüller en fazla %100 olabilir.
+                    {{ __('When disabled, the reward is applied once. When enabled, the discount increases for each completed threshold. For example, a 100 TL reward at 3 units becomes 200 TL at 6 units. Percentage rewards cannot exceed 100%.') }}
                 </div>
             </div>
         </div>

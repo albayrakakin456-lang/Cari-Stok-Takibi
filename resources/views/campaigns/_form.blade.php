@@ -18,9 +18,9 @@
 @if($errors->any())
     <div class="alert alert-danger shadow-sm border-danger-subtle" role="alert" aria-live="polite">
         <div class="fw-bold mb-1">
-            <i class="bi bi-exclamation-circle me-1"></i> Kampanya henüz kaydedilemedi
+            <i class="bi bi-exclamation-circle me-1"></i> {{ __('The campaign could not be saved') }}
         </div>
-        <div class="small mb-2">Lütfen aşağıdaki bilgileri tamamlayıp tekrar deneyin:</div>
+        <div class="small mb-2">{{ __('Please complete the information below and try again:') }}</div>
         <ul class="mb-0 small ps-3">
             {{-- Aynı doğrulama mesajı birden fazla alandan gelirse kullanıcıya yalnızca bir kez gösterilir. --}}
             @foreach(collect($errors->all())->unique() as $error)
@@ -37,25 +37,25 @@
     @endif
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3">Temel Bilgiler</div>
+        <div class="card-header bg-white py-3">{{ __('Basic Information') }}</div>
         <div class="card-body p-4">
             <div class="row g-3">
                 <div class="col-md-8">
-                    <label for="name" class="form-label fw-semibold">Kampanya Adı *</label>
+                    <label for="name" class="form-label fw-semibold">{{ __('Campaign Name') }} *</label>
                     <input type="text" id="name" name="name" value="{{ old('name', $campaign->name ?? '') }}" class="form-control @error('name') is-invalid @enderror" maxlength="255" required>
                 </div>
                 <div class="col-md-4">
-                    <label for="code" class="form-label fw-semibold">Kampanya Kodu</label>
-                    <input type="text" id="code" name="code" value="{{ old('code', $campaign->code ?? '') }}" class="form-control @error('code') is-invalid @enderror" placeholder="Örn: YAZ2026" maxlength="100">
+                    <label for="code" class="form-label fw-semibold">{{ __('Campaign Code') }}</label>
+                    <input type="text" id="code" name="code" value="{{ old('code', $campaign->code ?? '') }}" class="form-control @error('code') is-invalid @enderror" placeholder="{{ __('Example: SUMMER2026') }}" maxlength="100">
                 </div>
                 <div class="col-12">
-                    <label for="description" class="form-label fw-semibold">Açıklama</label>
+                    <label for="description" class="form-label fw-semibold">{{ __('Description') }}</label>
                     <textarea id="description" name="description" class="form-control" rows="2" maxlength="2000">{{ old('description', $campaign->description ?? '') }}</textarea>
                 </div>
                 <div class="col-12">
-                    <label for="type" class="form-label fw-semibold">Kampanya Türü *</label>
+                    <label for="type" class="form-label fw-semibold">{{ __('Campaign Type') }} *</label>
                     <select id="type" name="type" class="form-select @error('type') is-invalid @enderror" required>
-                        <option value="">Kampanya türünü seçin</option>
+                        <option value="">{{ __('Select a campaign type') }}</option>
                         @foreach($campaignTypes as $type)
                             <option value="{{ $type->value }}" data-target="{{ $type->targetType()?->value ?? 'conditional' }}" @selected($selectedType === $type->value)>
                                 {{ $type->label() }}
@@ -68,10 +68,10 @@
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3">Hedef ve İndirim Ayarları</div>
+        <div class="card-header bg-white py-3">{{ __('Target and Discount Settings') }}</div>
         <div class="card-body p-4">
             <div id="productTarget" class="campaign-target d-none mb-4">
-                <label for="product_ids" class="form-label fw-semibold">Ürünler *</label>
+                <label for="product_ids" class="form-label fw-semibold">{{ __('Products') }} *</label>
                 <select id="product_ids" name="target_ids[]" class="form-select" multiple size="6" disabled>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}" @selected(in_array((string) $product->id, $selectedTargets, true))>
@@ -79,11 +79,11 @@
                         </option>
                     @endforeach
                 </select>
-                <div class="form-text">Birden fazla ürün seçmek için Ctrl tuşunu basılı tutabilirsiniz.</div>
+                <div class="form-text">{{ __('Hold Ctrl to select multiple products.') }}</div>
             </div>
 
             <div id="categoryTarget" class="campaign-target d-none mb-4">
-                <label for="category_ids" class="form-label fw-semibold">Kategoriler *</label>
+                <label for="category_ids" class="form-label fw-semibold">{{ __('Categories') }} *</label>
                 <select id="category_ids" name="target_ids[]" class="form-select" multiple size="5" disabled>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" @selected(in_array((string) $category->id, $selectedTargets, true))>
@@ -94,28 +94,28 @@
             </div>
 
             <div class="campaign-parameters d-none" data-campaign-type="product_percentage">
-                <label class="form-label fw-semibold">İndirim Oranı (%) *</label>
+                <label class="form-label fw-semibold">{{ __('Discount Rate (%)') }} *</label>
                 <input type="number" name="parameters[discount_rate]" value="{{ $parameters['discount_rate'] ?? '' }}" class="form-control" min="0.01" max="100" step="0.01" disabled>
             </div>
 
             <div class="campaign-parameters d-none" data-campaign-type="category_percentage">
-                <label class="form-label fw-semibold">İndirim Oranı (%) *</label>
+                <label class="form-label fw-semibold">{{ __('Discount Rate (%)') }} *</label>
                 <input type="number" name="parameters[discount_rate]" value="{{ $parameters['discount_rate'] ?? '' }}" class="form-control" min="0.01" max="100" step="0.01" disabled>
             </div>
 
             <div class="campaign-parameters d-none" data-campaign-type="product_fixed">
-                <label class="form-label fw-semibold">Ürün Başına İndirim Tutarı (TL) *</label>
+                <label class="form-label fw-semibold">{{ __('Discount Amount Per Product (TL)') }} *</label>
                 <input type="number" name="parameters[discount_amount]" value="{{ $parameters['discount_amount'] ?? '' }}" class="form-control" min="0.01" step="0.01" disabled>
             </div>
 
             <div class="campaign-parameters d-none" data-campaign-type="buy_x_pay_y">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Alınması Gereken Miktar (X) *</label>
+                        <label class="form-label fw-semibold">{{ __('Required Quantity (X)') }} *</label>
                         <input type="number" name="parameters[buy_quantity]" value="{{ $parameters['buy_quantity'] ?? 3 }}" class="form-control" min="2" step="1" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Ödenecek Miktar (Y) *</label>
+                        <label class="form-label fw-semibold">{{ __('Payable Quantity (Y)') }} *</label>
                         <input type="number" name="parameters[pay_quantity]" value="{{ $parameters['pay_quantity'] ?? 2 }}" class="form-control" min="1" step="1" disabled>
                     </div>
                 </div>
@@ -124,11 +124,11 @@
             <div class="campaign-parameters d-none" data-campaign-type="category_third_half">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Gerekli Farklı Ürün Sayısı *</label>
+                        <label class="form-label fw-semibold">{{ __('Required Different Product Count') }} *</label>
                         <input type="number" name="parameters[different_product_count]" value="{{ $parameters['different_product_count'] ?? 3 }}" class="form-control" min="2" step="1" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">En Ucuz Ürüne İndirim (%) *</label>
+                        <label class="form-label fw-semibold">{{ __('Discount on Cheapest Product (%)') }} *</label>
                         <input type="number" name="parameters[discount_rate]" value="{{ $parameters['discount_rate'] ?? 50 }}" class="form-control" min="0.01" max="100" step="0.01" disabled>
                     </div>
                 </div>
@@ -137,11 +137,11 @@
             <div class="campaign-parameters d-none" data-campaign-type="category_threshold_fixed">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Minimum Kategori Tutarı (TL) *</label>
+                        <label class="form-label fw-semibold">{{ __('Minimum Category Amount (TL)') }} *</label>
                         <input type="number" name="parameters[minimum_amount]" value="{{ $parameters['minimum_amount'] ?? 2500 }}" class="form-control" min="0.01" step="0.01" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">İndirim Tutarı (TL) *</label>
+                        <label class="form-label fw-semibold">{{ __('Discount Amount (TL)') }} *</label>
                         <input type="number" name="parameters[discount_amount]" value="{{ $parameters['discount_amount'] ?? 500 }}" class="form-control" min="0.01" step="0.01" disabled>
                     </div>
                 </div>
@@ -151,31 +151,31 @@
 
             <div id="typeHint" class="text-center text-muted py-4">
                 <i class="bi bi-hand-index fs-3 d-block mb-2"></i>
-                Ayarları görmek için kampanya türünü seçin.
+                {{ __('Select a campaign type to view its settings.') }}
             </div>
         </div>
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3">Yayın Ayarları</div>
+        <div class="card-header bg-white py-3">{{ __('Publication Settings') }}</div>
         <div class="card-body p-4">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="starts_at" class="form-label fw-semibold">Başlangıç</label>
+                    <label for="starts_at" class="form-label fw-semibold">{{ __('Start') }}</label>
                     <input type="datetime-local" id="starts_at" name="starts_at" value="{{ old('starts_at', isset($campaign) && $campaign->starts_at ? $campaign->starts_at->format('Y-m-d\TH:i') : '') }}" class="form-control">
                 </div>
                 <div class="col-md-6">
-                    <label for="ends_at" class="form-label fw-semibold">Bitiş</label>
+                    <label for="ends_at" class="form-label fw-semibold">{{ __('End') }}</label>
                     <input type="datetime-local" id="ends_at" name="ends_at" value="{{ old('ends_at', isset($campaign) && $campaign->ends_at ? $campaign->ends_at->format('Y-m-d\TH:i') : '') }}" class="form-control">
                 </div>
                 <div class="col-12 d-flex flex-wrap gap-4 pt-2">
                     <div class="form-check form-switch">
                         <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" @checked(old('is_active', $campaign->is_active ?? true))>
-                        <label class="form-check-label fw-semibold" for="is_active">Kampanya aktif</label>
+                        <label class="form-check-label fw-semibold" for="is_active">{{ __('Campaign is active') }}</label>
                     </div>
                     <div class="form-check form-switch">
                         <input type="checkbox" class="form-check-input" id="is_exclusive" name="is_exclusive" value="1" @checked(old('is_exclusive', $campaign->is_exclusive ?? false))>
-                        <label class="form-check-label fw-semibold" for="is_exclusive">Diğer kampanyalarla birleşmesin</label>
+                        <label class="form-check-label fw-semibold" for="is_exclusive">{{ __('Do not combine with other campaigns') }}</label>
                     </div>
                 </div>
             </div>
@@ -183,7 +183,7 @@
     </div>
 
     <div class="d-flex justify-content-end gap-2">
-        <a href="{{ route('campaigns.index') }}" class="btn btn-light border">İptal</a>
+        <a href="{{ route('campaigns.index') }}" class="btn btn-light border">{{ __('Cancel') }}</a>
         <button type="submit" class="btn btn-primary px-4">
             <i class="bi bi-check-lg me-1"></i> {{ $submitLabel }}
         </button>

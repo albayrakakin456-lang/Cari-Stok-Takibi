@@ -68,8 +68,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        // Foreign key nullOnDelete olduğu için ürünler silinmez, kategorisiz kalır.
-        $category->delete();
+        DB::transaction(function () use ($category): void {
+            // Paylaşımlı sunucuda FK desteği olmasa da ürünleri güvenle kategorisiz bırak.
+            $category->products()->update(['category_id' => null]);
+            $category->delete();
+        });
 
         return back()->with('success', 'Kategori silindi; ürünler korunarak kategorisiz bırakıldı.');
     }

@@ -104,8 +104,8 @@
                         <th class="text-center">{{ __('Quantity') }}</th>
                         <th class="text-end">Orijinal Fiyat</th>
                         <th class="text-end">Satır İndirimi</th>
-                        <th class="text-center">KDV Oranı</th>
-                        <th class="text-end">KDV Tutarı</th>
+                        <th class="text-center">{{ __('VAT Rate') }}</th>
+                        <th class="text-end">{{ __('VAT Amount') }}</th>
                         <th class="text-end pe-4">{{ __('Total Amount') }}</th>
                     </tr>
                 </thead>
@@ -144,7 +144,7 @@
                         <th class="text-end text-danger pe-4">-{{ number_format($sale->customer_discount, 2, ',', '.') }} ₺</th>
                     </tr>
                     <tr>
-                        <th colspan="8" class="text-end">KDV Toplamı (Dahil):</th>
+                        <th colspan="8" class="text-end">{{ __('VAT Total (Included):') }}</th>
                         <th class="text-end pe-4">{{ number_format($sale->items->sum(function ($item) {
                             $rate = $item->tax_rate ?? $item->product?->tax_rate ?? 0;
                             return $item->tax_rate === null
@@ -153,7 +153,7 @@
                         }), 2, ',', '.') }} ₺</th>
                     </tr>
                     <tr>
-                        <th colspan="8" class="text-end fs-5 py-3">Genel Toplam (KDV Dahil):</th>
+                        <th colspan="8" class="text-end fs-5 py-3">{{ __('Grand Total (VAT Included):') }}</th>
                         <th class="text-end fs-5 text-success pe-4 py-3">{{ number_format($sale->total_amount, 2, ',', '.') }} ₺</th>
                     </tr>
                 </tfoot>

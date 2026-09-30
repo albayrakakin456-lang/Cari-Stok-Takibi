@@ -15,13 +15,13 @@ enum CampaignType: string
     public function label(): string
     {
         return match ($this) {
-            self::ProductPercentage => 'Ürüne Yüzde İndirim',
-            self::ProductFixed => 'Ürüne Sabit Tutar İndirimi',
-            self::CategoryPercentage => 'Kategoriye Yüzde İndirim',
-            self::BuyXPayY => 'X Al Y Öde',
-            self::CategoryThirdHalf => 'Kategoride Farklı Ürün İndirimi',
-            self::CategoryThresholdFixed => 'Kategori Tutar İndirimi',
-            self::Conditional => 'Koşullu Kampanya (Özel Kurgu)',
+            self::ProductPercentage => __('Product Percentage Discount'),
+            self::ProductFixed => __('Product Fixed Amount Discount'),
+            self::CategoryPercentage => __('Category Percentage Discount'),
+            self::BuyXPayY => __('Buy X Pay Y'),
+            self::CategoryThirdHalf => __('Different Products in Category Discount'),
+            self::CategoryThresholdFixed => __('Category Amount Discount'),
+            self::Conditional => __('Conditional Campaign (Custom Setup)'),
         };
     }
 
